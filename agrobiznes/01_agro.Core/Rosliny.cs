@@ -13,7 +13,7 @@ namespace _01_agro.Core
         Kwiat,
         Sukulent
     }
-    public class Rosliny: ITickable,
+    public class Rosliny: ITickable, IComparable<Rosliny>, ICloneable
     {
         string nazwa;
         float cena;
@@ -84,6 +84,30 @@ namespace _01_agro.Core
 
                 zuzycie_energii_slonecznej_na_tick = value;
             }
+        }
+
+        public object Clone()
+        {
+            return new Rosliny
+            {
+                Nazwa = this.Nazwa,
+                Cena = this.Cena,
+                TypRosliny1 = this.TypRosliny1,
+                Poziom_wzrostu = this.Poziom_wzrostu,
+                Poziom_nawodnienia = this.Poziom_nawodnienia,
+                Poziom_naslonecznienia = this.Poziom_naslonecznienia,
+                Wzrost_na_tick = this.Wzrost_na_tick,
+                Odwodnienie_na_tick = this.Odwodnienie_na_tick,
+                Zuzycie_energii_slonecznej_na_tick = this.Zuzycie_energii_slonecznej_na_tick
+            };
+        }
+
+        public int CompareTo(Rosliny? other)
+        {
+            if (other == null)
+                return 1;
+
+            return this.Poziom_wzrostu.CompareTo(other.Poziom_wzrostu);
         }
 
         public void Tick(FarmState state)
