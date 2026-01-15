@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace _01_agro.Core
 {
-    internal class Uprawa : Rosliny
+    internal class Uprawa : Rosliny, ITickable
     {
         float poziom_wzrostu; // 1-100?
         float poziom_nawodnienia; //1-100%
