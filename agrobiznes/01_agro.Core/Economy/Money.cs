@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace _01_agro.Core.Economy
 {
+    /// <summary>
+    /// Obiekt wartości reprezentujący kwotę pieniężną.
+    /// Używany w całym module ekonomii (saldo, transakcje, podatki, raporty).
+    /// </summary>
     public readonly struct Money
     {
         public decimal Amount { get; }

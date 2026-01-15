@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace _01_agro.Core.Economy
+{
+    public class FinancialReport
+    {
+        public string Title { get; set; }
+
+        public Money Revenue { get; set; }
+        public Money Costs { get; set; }
+        public Money Profit { get; set; }
+        public Money Tax { get; set; }
+        public Money NetProfit { get; set; }
+    }
+}

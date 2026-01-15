@@ -30,6 +30,15 @@ namespace _01_agro.Core.Economy
         public TransactionCategory Category { get; }
         public abstract TransactionType Type{ get; }
 
+        public Transaction(Money amount, TransactionCategory category, string description, DateTimeOffset? occurredAt = null)
+        {
+            Id = Guid.NewGuid();
+            OccurredAt = occurredAt ?? DateTimeOffset.UtcNow;
+            Amount = amount;
+            Category = category;
+            Description = description;
+        }
+
 
     }
 }
