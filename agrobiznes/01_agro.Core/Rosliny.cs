@@ -19,5 +19,6 @@ namespace _01_agro.Core
         float poziom_wzrostu; // 1-100?
         float poziom_nawodnienia; // 
         float cena;
+        TypRosliny TypRosliny;
     }
 }

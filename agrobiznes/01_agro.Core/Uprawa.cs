@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace _01_agro.Core
 {
-    internal class Uprawa
+    internal class Uprawa : Rosliny
     {
+        float poziom_wzrostu; // 1-100?
+        float poziom_nawodnienia; //1-100%
+        float poziom_naslonecznienia; // 1-100%?
+        float wzrost_na_tick;
+        float odwodnienie_na_tick;
     }
 }
