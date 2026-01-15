@@ -6,7 +6,18 @@ using System.Threading.Tasks;
 
 namespace _01_agro.Core
 {
-    internal class Rośliny
+    public enum TypRosliny
     {
+        Warzywo,
+        Owoc,
+        Kwiat,
+        Sukulent
+    }
+    abstract public class Rosliny
+    {
+        string nazwa;
+        float poziom_wzrostu; // 1-100?
+        float poziom_nawodnienia; // 
+        float cena;
     }
 }
