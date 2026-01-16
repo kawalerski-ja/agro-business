@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace _01_agro.Core.Economy
 {
+    /// <summary>
+    /// Główny silnik modułu ekonomii.
+    /// Zarządza transakcjami i saldem.
+    /// </summary>
+
     public class FinanceEngine
     {
         public Account Account { get; }

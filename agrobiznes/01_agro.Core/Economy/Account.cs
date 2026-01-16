@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 
 namespace _01_agro.Core.Economy
 {
+    /// <summary>
+    /// Konto finansowe systemu.
+    /// Przechowuje aktualne saldo farmy.
+    /// </summary>
+
     public class Account
     {
         public Money Balance { get; private set; }

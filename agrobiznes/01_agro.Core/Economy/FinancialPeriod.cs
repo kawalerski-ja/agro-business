@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace _01_agro.Core.Economy
 {
+    /// <summary>
+    /// Dane finansowe zagregowane dla określonego okresu czasu.
+    /// Wykorzystywane do podatków i raportów.
+    /// </summary>
+
     public class FinancialPeriod
     {
         public string Label { get; set; }

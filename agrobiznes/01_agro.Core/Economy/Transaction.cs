@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace _01_agro.Core.Economy
 {
+    /// <summary>
+    /// Kategoria biznesowa transakcji (do raportów).
+    /// </summary>
+
     public enum TransactionCategory
     {
         Energy,
@@ -15,12 +19,22 @@ namespace _01_agro.Core.Economy
         Fine,
         Other
     }
+
+    /// <summary>
+    /// Typ transakcji określający wpływ na saldo.
+    /// </summary>
+
     public enum TransactionType
     {
         Purchase,
         Sale,
         Penalty
     }
+
+    /// <summary>
+    /// Abstrakcyjna klasa bazowa dla wszystkich transakcji finansowych.
+    /// </summary>
+
     public abstract class Transaction
     {
         public Guid Id { get; }

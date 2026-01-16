@@ -8,8 +8,9 @@ namespace _01_agro.Core.Economy
 {
     /// <summary>
     /// Obiekt wartości reprezentujący kwotę pieniężną.
-    /// Używany w całym module ekonomii (saldo, transakcje, podatki, raporty).
+    /// Używany w całym module ekonomii (saldo, transakcje, raporty).
     /// </summary>
+
     public readonly struct Money
     {
         public decimal Amount { get; }
