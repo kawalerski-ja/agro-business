@@ -112,7 +112,6 @@ namespace _01_agro.Core
 
         public void Tick(FarmState state)
         {
-            throw new NotImplementedException();
             poziom_naslonecznienia-=zuzycie_energii_slonecznej_na_tick;
             poziom_nawodnienia-= odwodnienie_na_tick;
             poziom_wzrostu += wzrost_na_tick;
