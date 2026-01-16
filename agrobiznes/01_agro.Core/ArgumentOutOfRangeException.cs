@@ -8,6 +8,6 @@ namespace _01_agro.Core
 {
     internal class ArgumentOutOfRangeException : Exception
     {
-        public ArgumentOutOfRangeException(string message) : base(message) { }
+        public ArgumentOutOfRangeException(string message, string v) : base(message) { }
     }
 }
