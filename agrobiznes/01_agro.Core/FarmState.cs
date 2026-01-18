@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace _01_agro.Core
@@ -19,23 +20,24 @@ namespace _01_agro.Core
         // Mówi: "Mogę przyjąć funkcję, która bierze string i nic nie zwraca".
         // [NotMapped] oznacza, że nie chcemy tego zapisywać w tabeli FarmState w bazie.
         [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+        // Tego nie zapisujemy do pliku, bo to kod, a nie dane!
+        [JsonIgnore]
         public Action<string> Logger { get; set; }
 
         // 2. Pieniądze gracza (na start np. 1000)
 
 
-        // 3. Główna lista obiektów symulacji
-        // Silnik będzie robił: foreach(var obj in TickableObjects) obj.Tick(this);
-        public List<ITickable> TickableObjects { get; set; }
+        // 3. Główna lista obiektów symulacji - DODAWAJ OBIEKTY
 
+        public List<Sprinkler> Sprinklers { get; set; } = new List<Sprinkler>();
+        public List<Solar> Solars { get; set; } = new List<Solar>();
+        public List<Sensor> Sensors { get; set; } = new List<Sensor>();
         // Konstruktor inicjalizujący listę (żeby uniknąć błędów null)
         public FarmState()
         {
-            TickableObjects = new List<ITickable>();
+            
         }
 
-        // --- Plany na przyszłość ---
-        // Można np dodać: public List<Crop> Crops { get; set; } = new List<Crop>();
-        // Czyli po prostu przechowywanie roślinek
+        
     }
 }
