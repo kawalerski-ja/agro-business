@@ -17,13 +17,13 @@ namespace _03_agro.Logic
         // 2. Narzędzie do logowania
         // Odpowiada za raportowanie błędów do bazy SQL.
         private LogRepo _logger;
-
+        
         public SimulationEngine()
         {
             _state = new FarmState();
             _logger = new LogRepo();
+            _state.Logger = (message) => _logger.AddLog(message);
 
-           
         }
 
         // Metoda do dodawania obiektów (np. GUI ją wywoła jak gracz kupi maszynę)
