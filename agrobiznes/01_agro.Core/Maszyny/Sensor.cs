@@ -34,10 +34,10 @@ namespace _01_agro.Core
             {
                 // Tutaj sensor reaguje - uruchomienie zraszacza na stanie
                 state.Logger?.Invoke($"[ALARM] Wilgotność gleby krytyczna: {WaterReading}%");
-                /*
-                 * var pump = state.TickableObjects.OfType<Sprinkler>().FirstOrDefault();
-                   if (pump != null) pump.TurnOn();
-                 */
+                
+                 var pump = state.Sprinklers.FirstOrDefault();
+                   if (pump != null) pump.IsOn=true;
+                 
             }
             // 2b. ANALIZA I ALARM: UV
             if (UVReading < CriticalThreshold) {

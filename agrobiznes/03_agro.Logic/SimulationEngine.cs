@@ -20,21 +20,27 @@ namespace _03_agro.Logic
         
         public SimulationEngine()
         {
-            _state = new FarmState();
+            // WCZYTYWANIE STANU GRY
+            _state = GameSaver.LoadGame();
             _logger = new LogRepo();
+            if (_state == null)
+            {
+                _state = new FarmState();
+                _logger.AddLog("Rozpoczęto nową grę.");
+            }
+            else
+            {
+                _logger.AddLog("Wczytano zapis gry.");
+            }
+
+            
             _state.Logger = (message) => _logger.AddLog(message);
 
         }
 
         // Metoda do dodawania obiektów (np. GUI ją wywoła jak gracz kupi maszynę)
-        // Oczywiście cała farma, maszyny, portfel będą wczytywane inną metodą
-        public void RegisterObject(ITickable obj)
-        {
-            _state.TickableObjects.Add(obj);
-
-            // Logujemy zdarzenie techniczne do bazy
-            _logger.AddLog($"SYSTEM: Dodano nowy obiekt do symulacji: {obj.GetType().Name}");
-        }
+        // jeszcze nie wiem jak zrobić
+        
 
         // --- GŁÓWNA PĘTLA SYMULACJI (HEARTBEAT) ---
         // Ta metoda będzie wywoływana przez Timer z GUI (np. co 1 sekundę)
@@ -42,55 +48,46 @@ namespace _03_agro.Logic
         {
             _state.CurrentTick++;
 
+            // KROK 1: Zbierz wszystko w jedną tymczasową listę
             
+            var allObjects = new List<ITickable>();
 
-            // KROK 1: Iteracja po wszystkim co żyje
-            // Używamy .ToList(), żeby zrobić kopię listy. 
-            // Zapobiega to błędom, gdyby np. roślina umarła (została usunięta) w trakcie pętli.
-            foreach (var obj in _state.TickableObjects.ToList())
+            // DODAĆ OBIEKTY !!!
+            allObjects.AddRange(_state.Sprinklers);
+            allObjects.AddRange(_state.Solars);
+            allObjects.AddRange(_state.Sensors);
+
+            // KROK 2: Wykonaj logikę
+            foreach (var obj in allObjects)
             {
                 try
                 {
-                    // === Tu dzieje sie cala symulacja ===
-                    // Jeśli obj to Roślina -> tutaj sprawdzi wodę i urośnie.
-                    // Jeśli obj to Maszyna -> tutaj zużyje prąd i zadziała.
-                    // Jeśli obj to Rynek -> tutaj zmieni ceny.
                     obj.Tick(_state);
                 }
                 catch (Exception ex)
                 {
-                    
-
-                    string errorMsg = $"CRITICAL ERROR w obiekcie {obj.GetType().Name}: {ex.Message}";
-
-                    Console.WriteLine(errorMsg); // Na ekran debugowania
-                    _logger.AddLog(errorMsg);    // Do tabeli SystemLogs w bazie
+                    _state.Logger?.Invoke($"Błąd obiektu: {ex.Message}");
                 }
             }
 
-            // KROK 2: Obsługa AutoSave (działka Jana)
-            // Co 10 cykli (czyli np. co 10 sekund) zapisujemy grę
+            // obsługa AutoSave
+
             if (_state.CurrentTick % 10 == 0)
             {
-                PerformAutoSave();
-            }
-        }
-
-        // Metoda pomocnicza do zapisu stanu
-        private void PerformAutoSave()
-        {
-            try
-            {
-                // [TODO] Tu w przyszłości wstawiam kod zapisu całego obiektu FarmState do bazy
-                // np. _repo.SaveGame(_state);
-
+                try
+                {
+                    GameSaver.SaveGame(_state);
+                    _logger.AddLog("Wykonano automatyczny zapis gry [agro.Logic].");
+                }
+                catch (Exception ex)
+                {
+                    _logger.AddLog($"Błąd zapisu gry [agro.Logic]: {ex.Message}");
+                }
                 
-                _logger.AddLog("Wykonano automatyczny zapis gry."); // Opcjonalnie, żeby nie spamować bazy
-            }
-            catch (Exception ex)
-            {
-                _logger.AddLog($"Błąd zapisu gry (AutoSave): {ex.Message}");
             }
         }
+
+        
+        
     }
 }
