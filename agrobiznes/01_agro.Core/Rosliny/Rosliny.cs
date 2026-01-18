@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +17,9 @@ namespace _01_agro.Core
     }
     public class Rosliny: ITickable, IComparable<Rosliny>, ICloneable
     {
+        [Key] // Klucz główny w bazie
+        [DatabaseGenerated(DatabaseGeneratedOption.None)] // Używamy własnego GUID, nie auto-number
+        public Guid Id { get; set; } = Guid.NewGuid();
         string nazwa;
         float cena;
         TypRosliny TypRosliny;

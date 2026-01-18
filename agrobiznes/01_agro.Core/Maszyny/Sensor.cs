@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +10,8 @@ namespace _01_agro.Core
 {
     public class Sensor : ITickable
     {
+        [Key] // Klucz główny w bazie
+        [DatabaseGenerated(DatabaseGeneratedOption.None)] // Używamy własnego GUID, nie auto-number
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Name { get; set; } = "Sensor Wilgotności i UV";
 
@@ -29,6 +33,7 @@ namespace _01_agro.Core
             if (WaterReading < CriticalThreshold)
             {
                 // Tutaj sensor reaguje - uruchomienie zraszacza na stanie
+                state.Logger?.Invoke($"[ALARM] Wilgotność gleby krytyczna: {WaterReading}%");
                 /*
                  * var pump = state.TickableObjects.OfType<Sprinkler>().FirstOrDefault();
                    if (pump != null) pump.TurnOn();
@@ -36,7 +41,8 @@ namespace _01_agro.Core
             }
             // 2b. ANALIZA I ALARM: UV
             if (UVReading < CriticalThreshold) {
-            //dodaj uruchomienie lamp UV
+                //dodaj uruchomienie lamp UV
+                state.Logger?.Invoke($"[ALARM] Krytyczny poziom UV: {UVReading}%");
             }
         }
     }
