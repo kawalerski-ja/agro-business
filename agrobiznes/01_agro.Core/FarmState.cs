@@ -11,8 +11,12 @@ namespace _01_agro.Core
         // 1. Czas symulacji
         public long CurrentTick { get; set; } = 0;
 
+        public double SoilMoisture { get; set; } = 20.0;//0-100 poziom nawodnienia gleby
+
+        public double LightLevel { get; set; } = 20.0;
+
         // 2. Pieniądze gracza (na start np. 1000)
-        
+
 
         // 3. Główna lista obiektów symulacji
         // Silnik będzie robił: foreach(var obj in TickableObjects) obj.Tick(this);
