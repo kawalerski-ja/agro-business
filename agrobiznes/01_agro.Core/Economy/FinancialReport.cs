@@ -13,7 +13,7 @@ namespace _01_agro.Core.Economy
 
     public class FinancialReport
     {
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         public Money Revenue { get; set; }
         public Money Costs { get; set; }

@@ -14,7 +14,7 @@ namespace _01_agro.Core.Economy
     {
         public Money CalculateTax(FinancialPeriod period)
         {
-            throw new NotImplementedException();
+            return new Money(0m, period.Profit.Currency);
         }
     }
 }

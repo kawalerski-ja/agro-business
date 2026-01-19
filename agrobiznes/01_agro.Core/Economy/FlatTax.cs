@@ -12,11 +12,22 @@ namespace _01_agro.Core.Economy
 
     public class FlatTax: ITax
     {
-        public decimal Rate { get; set; }
+        public decimal Rate { get; }
+
+        public FlatTax(decimal rate)
+        {
+            if (rate < 0m || rate > 1m)
+                throw new ArgumentOutOfRangeException(nameof(rate), "Stawka podatku musi być w zakresie 0 - 1.");
+
+            Rate = rate;
+        }
 
         public Money CalculateTax(FinancialPeriod period)
         {
-            throw new NotImplementedException();
+            if (period.Profit.Amount <= 0m)
+                return new Money(0m, period.Profit.Currency);
+
+            return new Money(period.Profit.Amount * Rate, period.Profit.Currency);
         }
     }
 }
