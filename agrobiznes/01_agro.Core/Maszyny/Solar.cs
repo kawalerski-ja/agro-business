@@ -26,13 +26,7 @@ namespace _01_agro.Core
                 // 3. Pobierz opłatę za prąd
 
             }
-            else
-            {
-                // Naświetlenie UV samo się zmniejsza
-
-                state.LightLevel -= 1.0;
-                if (state.LightLevel < 0) state.LightLevel = 0;
-            }
+            
         }
     }
 }

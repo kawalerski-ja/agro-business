@@ -26,13 +26,7 @@ namespace _01_agro.Core
                 // 3. Pobierz opłatę za wodę/prąd
                 
             }
-            else
-            {
-                // Gleba sama wysycha, jeśli nikt jej nie podlewa
-                
-                state.SoilMoisture -= 1.0;
-                if (state.SoilMoisture < 0) state.SoilMoisture = 0;
-            }
+            
         }
     }
 }
