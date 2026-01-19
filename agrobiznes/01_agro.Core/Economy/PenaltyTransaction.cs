@@ -11,13 +11,18 @@ namespace _01_agro.Core.Economy
     /// Zmniejsza saldo konta.
     /// </summary>
 
-    public class PenaltyTransaction: Transaction
+    public sealed class PenaltyTransaction : Transaction
     {
         public override TransactionType Type => TransactionType.Penalty;
 
-        public PenaltyTransaction(Money amount, TransactionCategory category, string description)
-            : base(amount, category, description)
+        public PenaltyTransaction(Money amount, TransactionCategory category, string description, DateTimeOffset? occurredAt = null)
+            : base(amount, category, description, occurredAt)
         {
+        }
+
+        public override void Apply(Account account)
+        {
+            account.Debit(Amount);
         }
     }
 }

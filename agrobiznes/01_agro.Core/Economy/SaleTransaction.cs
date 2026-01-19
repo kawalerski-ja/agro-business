@@ -11,13 +11,18 @@ namespace _01_agro.Core.Economy
     /// Zwiększa saldo konta.
     /// </summary>
 
-    public class SaleTransaction: Transaction
+    public sealed class SaleTransaction : Transaction
     {
         public override TransactionType Type => TransactionType.Sale;
 
-        public SaleTransaction(Money amount, TransactionCategory category, string description)
-            : base(amount, category, description)
+        public SaleTransaction(Money amount, TransactionCategory category, string description, DateTimeOffset? occurredAt = null)
+            : base(amount, category, description, occurredAt)
         {
+        }
+
+        public override void Apply(Account account)
+        {
+            account.Credit(Amount);
         }
     }
 }

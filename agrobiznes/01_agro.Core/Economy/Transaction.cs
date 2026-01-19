@@ -44,7 +44,7 @@ namespace _01_agro.Core.Economy
         public TransactionCategory Category { get; }
         public abstract TransactionType Type{ get; }
 
-        public Transaction(Money amount, TransactionCategory category, string description, DateTimeOffset? occurredAt = null)
+        protected Transaction(Money amount, TransactionCategory category, string description, DateTimeOffset? occurredAt = null)
         {
             Id = Guid.NewGuid();
             OccurredAt = occurredAt ?? DateTimeOffset.UtcNow;
@@ -52,6 +52,10 @@ namespace _01_agro.Core.Economy
             Category = category;
             Description = description;
         }
+
+        public abstract void Apply(Account account);
+
+        public override string ToString() => $"{OccurredAt:u} | {Type} | {Amount} | {Category} | {Description}";
 
 
     }

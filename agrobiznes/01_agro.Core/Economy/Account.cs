@@ -29,14 +29,11 @@ namespace _01_agro.Core.Economy
         }
         public void Debit(Money amount)
         {
-            if (Balance.Amount > amount.Amount)
-            {
                 if (amount.Amount > Balance.Amount)
                     throw new InvalidOperationException("Brak środków");
 
                 Balance = new Money(Balance.Amount - amount.Amount, Balance.Currency);
                 BalanceChanged?.Invoke(Balance);
-            }
 
         }
     }
