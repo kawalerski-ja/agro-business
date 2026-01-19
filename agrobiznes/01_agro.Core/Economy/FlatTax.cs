@@ -17,7 +17,7 @@ namespace _01_agro.Core.Economy
         public FlatTax(decimal rate)
         {
             if (rate < 0m || rate > 1m)
-                throw new ArgumentOutOfRangeException(nameof(rate), "Stawka podatku musi być w zakresie 0 - 1.");
+                throw new System.ArgumentOutOfRangeException(nameof(rate));
 
             Rate = rate;
         }
