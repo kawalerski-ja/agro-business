@@ -21,10 +21,11 @@ namespace _01_agro.Core.Economy
         {
             if (amount < 0m)
                 throw new ArgumentOutOfRangeException(nameof(amount));
-
             Amount = amount;
-            Currency = "PLN";
+            Currency = currency;
         }
+        public Money(decimal amount) : this(amount, "PLN") { }
+
         public override string ToString()
         {
             return $"{Amount:0.00} {Currency}";
