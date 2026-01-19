@@ -131,8 +131,12 @@ namespace _03_agro.Logic
         // --- GŁÓWNA PĘTLA (TICK) ---
         public void Tick()
         {
-            _state.CurrentTick++;
-
+            _state.CurrentTick++; // Zwiększenie ticka
+            // Gleba sama wysycha i zmniejsza się poziom UV
+            _state.SoilMoisture -= 1.0;
+            if (_state.SoilMoisture < 0) _state.SoilMoisture = 0;
+            _state.LightLevel -= 1.0;
+            if (_state.LightLevel < 0) _state.LightLevel = 0;
             // 1. Zbieramy wszystko do jednej listy
             var allObjects = new List<ITickable>();
 

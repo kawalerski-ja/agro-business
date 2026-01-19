@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,8 +11,8 @@ namespace _01_agro.Core.Economy
     /// Obiekt wartości reprezentujący kwotę pieniężną.
     /// Używany w całym module ekonomii (saldo, transakcje, raporty).
     /// </summary>
-
-    public readonly struct Money
+    [ComplexType]
+    public class Money
     {
         public decimal Amount { get; }
         public string Currency { get; }

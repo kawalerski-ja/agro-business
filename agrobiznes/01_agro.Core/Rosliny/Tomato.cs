@@ -8,7 +8,12 @@ namespace _01_agro.Core
 {
     public class Tomato : Rosliny
     {
-        public Tomato(): base("Pomidor",TypRosliny.Warzywo) { }
+        public Tomato(): base("Pomidor",TypRosliny.Warzywo) {
+            Cena = 2;
+            CenaSprzedazy = 2.5f;
+            PoziomNawodnienia = 50;
+            PoziomNaslonecznienia = 50;
+        }
         protected override void DoSpecificGrowth()
         {
             PoziomWzrostu += 2;

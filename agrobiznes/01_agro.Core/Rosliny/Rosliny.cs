@@ -37,6 +37,8 @@ namespace _01_agro.Core
             }
         }
 
+        public float CenaSprzedazy { get; set; }
+
         
         public float PoziomWzrostu { get; set; } = 0;
         public float PoziomNawodnienia { get; set; } = 20;
