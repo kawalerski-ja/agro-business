@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using _01_agro.Core.Economy;
 
 namespace _01_agro.Core
 {   //klasa FarmState czyli "stan świata": będzie przechowywała roślinki i maszyny, tick, pieniądze
@@ -23,8 +24,7 @@ namespace _01_agro.Core
         [JsonIgnore]
         public Action<string> Logger { get; set; }
 
-        // 2. Pieniądze gracza (na start np. 1000)
-        // KONIECZNIE DODAĆ ACCOUNT (upewnić się, że money to class)
+      
 
         // 3. Główna lista obiektów symulacji - DODAWAJ OBIEKTY
         public List<Tomato> Tomatoes { get; set; } = new List<Tomato>();
@@ -34,6 +34,8 @@ namespace _01_agro.Core
         public List<Sprinkler> Sprinklers { get; set; } = new List<Sprinkler>();
         public List<Solar> Solars { get; set; } = new List<Solar>();
         public List<Sensor> Sensors { get; set; } = new List<Sensor>();
+
+        public Account Account { get; set; } = new Account();
         // Konstruktor inicjalizujący listę (żeby uniknąć błędów null)
         public FarmState()
         {
