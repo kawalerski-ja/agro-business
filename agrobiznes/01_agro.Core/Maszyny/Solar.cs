@@ -11,6 +11,7 @@ namespace _01_agro.Core
         public Solar()
         {
             Name = "Lampa UV";
+            Cena = 500;
         }
         public override void Tick(FarmState state)
         {

@@ -15,6 +15,8 @@ namespace _01_agro.Core
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Name { get; set; } = string.Empty;
         public bool IsOn { get; set; }
+
+        public float Cena { get; set; }
         public abstract void Tick(FarmState state);
         
     }

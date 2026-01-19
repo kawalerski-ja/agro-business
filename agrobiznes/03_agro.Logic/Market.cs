@@ -155,5 +155,42 @@ namespace _03_agro.Logic
 
             return (doSprzedania.Count, zysk);
         }
+
+        // ==========================================
+        // 4. KUPOWANIE MASZYN
+        // ==========================================
+
+        public string KupZraszacz()
+        {
+            var nowaMaszyna = new Sprinkler();
+            return KupMaszyneKonkretna(nowaMaszyna, _state.Sprinklers);
+        }
+
+        public string KupPanelSloneczny()
+        {
+            var nowaMaszyna = new Solar();
+            return KupMaszyneKonkretna(nowaMaszyna, _state.Solars);
+        }
+
+        // --- POMOCNICZA METODA DLA MASZYN ---
+        
+        private string KupMaszyneKonkretna<T>(T maszyna, List<T> listaDocelowa) where T : Device
+        {
+            float koszt = maszyna.Cena;
+
+            // 1. Walidacja finansowa (Zostawiam miejsce)
+            // if (_state.GameAccount.Balance.Amount < koszt) 
+            //      return $"BŁĄD: Maszyna kosztuje {koszt:C}, a masz {_state.GameAccount.Balance.Amount:C}";
+
+            // 2. Pobranie pieniędzy (TODO)
+            // _state.GameAccount.Withdraw(koszt); 
+
+            // 3. Dodanie do farmy
+            listaDocelowa.Add(maszyna);
+
+            string msg = $"SKLEP: Zakupiono maszynę: {maszyna.Name}. Koszt: {koszt:C}";
+            _logger.AddLog(msg);
+            return msg;
+        }
     }
 }
