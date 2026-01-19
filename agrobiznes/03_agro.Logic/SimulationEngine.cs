@@ -1,58 +1,114 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Timers; // Do Timera
 using _01_agro.Core;
 using _02_agro.Data;
+
 
 namespace _03_agro.Logic
 {
     public class SimulationEngine
     {
-        // 1. Stan Świata (To tutaj żyją wszystkie obiekty: rośliny, maszyny, kasa)
-        // Dzięki temu silnik wie, czym zarządzać.
         private FarmState _state;
-
-        // 2. Narzędzie do logowania
-        // Odpowiada za raportowanie błędów do bazy SQL.
         private LogRepo _logger;
-        
+        private System.Timers.Timer _gameTimer;
+
+        // --- KONSTRUKTOR ---
         public SimulationEngine()
         {
-            // WCZYTYWANIE STANU GRY
-            _state = GameSaver.LoadGame();
             _logger = new LogRepo();
+            _state = GameSaver.LoadGame();
+
             if (_state == null)
             {
                 _state = new FarmState();
                 _logger.AddLog("Rozpoczęto nową grę.");
+                InitializeStarterFarm();
             }
             else
             {
                 _logger.AddLog("Wczytano zapis gry.");
             }
 
-            
+            // Podpięcie loggera
             _state.Logger = (message) => _logger.AddLog(message);
 
+            // Konfiguracja Timera
+            _gameTimer = new System.Timers.Timer(1000); // 1 sekunda
+            _gameTimer.Elapsed += OnTimedEvent;
+            _gameTimer.AutoReset = true;
         }
 
-        // Metoda do dodawania obiektów (np. GUI ją wywoła jak gracz kupi maszynę)
-        // jeszcze nie wiem jak zrobić
-        
+        // --- METODY STERUJĄCE (START / STOP) ---
+        public void StartSimulation()
+        {
+            _gameTimer.Start();
+            _logger.AddLog("SYMULACJA: Rozpoczęto.");
+        }
 
-        // --- GŁÓWNA PĘTLA SYMULACJI (HEARTBEAT) ---
-        // Ta metoda będzie wywoływana przez Timer z GUI (np. co 1 sekundę)
+        public void StopSimulation()
+        {
+            _gameTimer.Stop();
+            _logger.AddLog("SYMULACJA: Zatrzymano.");
+            GameSaver.SaveGame(_state);
+        }
+
+        // --- OBSŁUGA TIMERA ---
+        private void OnTimedEvent(Object source, ElapsedEventArgs e)
+        {
+            Tick(); // Wywołujemy logikę gry
+
+            // Testowo: info w konsoli debuggera
+            Console.WriteLine($"TURA {_state.CurrentTick}");
+        }
+
+        // --- REJESTRACJA OBIEKTÓW (To woła GUI jak coś się kupuje) ---
+        public void RegisterObject(ITickable obj)
+        {
+            // SORTOWNIA: Wrzucamy obiekt do odpowiedniej listy
+            if (obj is Tomato tomato) _state.Tomatoes.Add(tomato);
+            else if (obj is Apple apple) _state.Apples.Add(apple);
+            else if (obj is Rose rose) _state.Roses.Add(rose);
+            else if (obj is Cactus cactus) _state.Cactile.Add(cactus);
+
+            else if (obj is Sprinkler sprinkler) _state.Sprinklers.Add(sprinkler);
+            else if (obj is Solar solar) _state.Solars.Add(solar);
+            else if (obj is Sensor sensor) _state.Sensors.Add(sensor);
+
+            else
+            {
+                _logger.AddLog($"BŁĄD: Nieznany typ obiektu: {obj.GetType().Name}");
+                return;
+            }
+
+            _logger.AddLog($"[agro.Logic]: Dodano nowy obiekt: {obj.GetType().Name}");
+        }
+
+        // --- PAKIET STARTOWY ---
+        public void InitializeStarterFarm()
+        {
+            if (_state.Tomatoes.Count == 0)
+            {
+                _logger.AddLog("[agro.Logic]: Wykryto pustą farmę. Sadzenie pakietu startowego...");
+                for (int i = 0; i < 5; i++)
+                {
+                    var p = new Tomato();
+                    p.PoziomNawodnienia = 60;
+                    _state.Tomatoes.Add(p);
+                }
+                GameSaver.SaveGame(_state);
+            }
+        }
+
+        // --- GŁÓWNA PĘTLA (TICK) ---
         public void Tick()
         {
             _state.CurrentTick++;
 
-            // KROK 1: Zbierz wszystko w jedną tymczasową listę
-            
+            // 1. Zbieramy wszystko do jednej listy
             var allObjects = new List<ITickable>();
 
-            // DODAĆ OBIEKTY !!!
             allObjects.AddRange(_state.Sprinklers);
             allObjects.AddRange(_state.Solars);
             allObjects.AddRange(_state.Sensors);
@@ -61,7 +117,7 @@ namespace _03_agro.Logic
             allObjects.AddRange(_state.Roses);
             allObjects.AddRange(_state.Cactile);
 
-            // KROK 2: Wykonaj logikę
+            // 2. Wykonujemy logikę
             foreach (var obj in allObjects)
             {
                 try
@@ -70,33 +126,29 @@ namespace _03_agro.Logic
                 }
                 catch (Exception ex)
                 {
-                    _state.Logger?.Invoke($"Błąd obiektu: {ex.Message}");
+                    _state.Logger?.Invoke($"Błąd obiektu {obj.GetType().Name}: {ex.Message}");
                 }
             }
 
-            // obsługa AutoSave
-
+            // 3. AutoSave (co 10 tur)
             if (_state.CurrentTick % 10 == 0)
             {
                 try
                 {
                     GameSaver.SaveGame(_state);
-                    _logger.AddLog("Wykonano automatyczny zapis gry [agro.Logic].");
+
                 }
                 catch (Exception ex)
                 {
-                    _logger.AddLog($"Błąd zapisu gry [agro.Logic]: {ex.Message}");
+                    _logger.AddLog($"[agro.Logic]Błąd zapisu: {ex.Message}");
                 }
-                
             }
 
-            int removedTomatoes = _state.Tomatoes.RemoveAll(p => p.IsDead);
-            int removedCactile = _state.Cactile.RemoveAll(p => p.IsDead);
-            int removedRoses = _state.Roses.RemoveAll(p => p.IsDead);
-            int removedApples = _state.Apples.RemoveAll(p => p.IsDead);
+            // 4. Sprzątanie martwych roślin
+            _state.Tomatoes.RemoveAll(p => p.IsDead);
+            _state.Cactile.RemoveAll(p => p.IsDead);
+            _state.Roses.RemoveAll(p => p.IsDead);
+            _state.Apples.RemoveAll(p => p.IsDead);
         }
-
-        
-        
-    }
-}
+    } 
+} 
