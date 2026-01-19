@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace _01_agro.Core
+{
+    public class Tomato : Rosliny
+    {
+        public Tomato(): base("Pomidor",TypRosliny.Warzywo) { }
+        protected override void DoSpecificGrowth()
+        {
+            PoziomWzrostu += 2;
+        }
+    }
+}
