@@ -24,12 +24,15 @@ namespace _03_agro.Logic
             {
                 _state = new FarmState();
                 _logger.AddLog("Rozpoczęto nową grę.");
-                InitializeStarterFarm();
+                
             }
             else
             {
                 _logger.AddLog("Wczytano zapis gry.");
             }
+            // Inicjalizacja farmy - kod wykona się tylko gdy nie będzie ani jednego pomidora
+            InitializeStarterFarm();
+
 
             // Podpięcie loggera
             _state.Logger = (message) => _logger.AddLog(message);
@@ -63,7 +66,7 @@ namespace _03_agro.Logic
             Console.Clear(); // Czyści ekran
 
             Console.WriteLine($"=== AGRO SYMULACJA | Tura: {_state.CurrentTick} ===");
-            Console.WriteLine($"KASA: narazie brak | GLEBA (Woda): {_state.SoilMoisture:F1}%");
+            Console.WriteLine($"UV: {_state.LightLevel:F1} | GLEBA (Woda): {_state.SoilMoisture:F1}%");
             Console.WriteLine("---------------------------------------------");
 
             // Sprawdźmy pierwszego pomidora (jeśli istnieje)
@@ -74,6 +77,7 @@ namespace _03_agro.Logic
                 Console.WriteLine($"[MONITORING] Pomidor #1: {status}");
                 Console.WriteLine($" - Nawodnienie: {testPomidor.PoziomNawodnienia:F1}%");
                 Console.WriteLine($" - Wzrost:      {testPomidor.PoziomWzrostu:F1}%");
+                Console.WriteLine($" - Nasłonecznienie:      {testPomidor.PoziomNaslonecznienia:F1}%");
             }
             else
             {
@@ -110,11 +114,14 @@ namespace _03_agro.Logic
         {
             if (_state.Tomatoes.Count == 0)
             {
+                _state.SoilMoisture = 30;
+                _state.LightLevel = 3;
                 _logger.AddLog("[agro.Logic]: Wykryto pustą farmę. Sadzenie pakietu startowego...");
                 for (int i = 0; i < 5; i++)
                 {
                     var p = new Tomato();
                     p.PoziomNawodnienia = 60;
+                    p.PoziomNaslonecznienia = 60;
                     _state.Tomatoes.Add(p);
                 }
                 GameSaver.SaveGame(_state);
