@@ -8,7 +8,10 @@ namespace _01_agro.Core
 {
     public class Apple:Rosliny
     {
-        public Apple():base("Jabłoń",TypRosliny.Owoc) { }
+        public Apple():base("Jabłoń",TypRosliny.Owoc) {
+            Cena = 10;
+            CenaSprzedazy = 15;
+        }
 
         protected override void DoSpecificGrowth()
         {
