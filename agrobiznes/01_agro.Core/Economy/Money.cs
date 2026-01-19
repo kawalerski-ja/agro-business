@@ -20,7 +20,7 @@ namespace _01_agro.Core.Economy
         public Money(decimal amount, string currency)
         {
             if (amount < 0m)
-                throw new ArgumentOutOfRangeException(nameof(amount));
+                throw new System.ArgumentOutOfRangeException(nameof(amount));
             Amount = amount;
             Currency = currency;
         }
