@@ -11,6 +11,8 @@ namespace _01_agro.Core
         public Apple():base("Jabłoń",TypRosliny.Owoc) {
             Cena = 10;
             CenaSprzedazy = 15;
+            PoziomNawodnienia = 50;
+            PoziomNaslonecznienia = 50;
         }
 
         protected override void DoSpecificGrowth()

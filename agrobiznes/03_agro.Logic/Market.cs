@@ -46,6 +46,54 @@ namespace _03_agro.Logic
             return msg;
         }
 
+        public string KupJablka(int ilosc)
+        {
+            var wzorzec = new Apple();
+            float koszt = wzorzec.Cena * ilosc;
+            for (int i = 0; i < ilosc; i++)
+            {
+                // Tworzymy nową sztukę
+                var t = new Apple();
+
+                _state.Apples.Add(t);
+            }
+            string msg = $"SKLEP: Kupiono {ilosc} jabłek. Koszt: {koszt:C}";
+            _logger.AddLog(msg);
+            return msg;
+        }
+
+        public string KupKaktusy(int ilosc)
+        {
+            var wzorzec = new Cactus();
+            float koszt = wzorzec.Cena * ilosc;
+            for (int i = 0; i < ilosc; i++)
+            {
+                // Tworzymy nową sztukę
+                var t = new Cactus();
+
+                _state.Cactile.Add(t);
+            }
+            string msg = $"SKLEP: Kupiono {ilosc} kaktusów. Koszt: {koszt:C}";
+            _logger.AddLog(msg);
+            return msg;
+        }
+
+        public string KupRóże(int ilosc)
+        {
+            var wzorzec = new Rose();
+            float koszt = wzorzec.Cena * ilosc;
+            for (int i = 0; i < ilosc; i++)
+            {
+                // Tworzymy nową sztukę
+                var t = new Rose();
+
+                _state.Roses.Add(t);
+            }
+            string msg = $"SKLEP: Kupiono {ilosc} róż. Koszt: {koszt:C}";
+            _logger.AddLog(msg);
+            return msg;
+        }
+
         // ==========================================
         // 2. SPRZEDAŻ (BARDZO PROSTA)
         // ==========================================
@@ -55,16 +103,23 @@ namespace _03_agro.Logic
             float zarobekCalkowity = 0;
             int iloscCalkowita = 0;
 
-            // Sprzedajemy każdą listę po kolei jedną uniwersalną metodą
-            // Nie musimy podawać ceny - metoda sama ją wyciągnie z roślin!
+            
 
             var wynikPomidory = SprzedajZListy(_state.Tomatoes);
             zarobekCalkowity += wynikPomidory.zarobek;
             iloscCalkowita += wynikPomidory.ilosc;
 
-            // Jak dodasz jabłka:
-            // var wynikJablka = SprzedajZListy(_state.Apples);
-            // zarobekCalkowity += wynikJablka.zarobek; iloscCalkowita += wynikJablka.ilosc;
+            var wynikJablka = SprzedajZListy(_state.Apples);
+            zarobekCalkowity += wynikJablka.zarobek; 
+            iloscCalkowita += wynikJablka.ilosc;
+
+            var wynikKaktusy = SprzedajZListy(_state.Cactile);
+            zarobekCalkowity += wynikKaktusy.zarobek;
+            iloscCalkowita += wynikKaktusy.ilosc;
+
+            var wynikRoze = SprzedajZListy(_state.Roses);
+            zarobekCalkowity += wynikRoze.zarobek;
+            iloscCalkowita += wynikRoze.ilosc;
 
             if (iloscCalkowita > 0)
             {
