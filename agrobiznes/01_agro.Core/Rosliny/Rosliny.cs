@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace _01_agro.Core
 {
@@ -15,112 +11,118 @@ namespace _01_agro.Core
         Kwiat,
         Sukulent
     }
-    public class Rosliny: ITickable, IComparable<Rosliny>, ICloneable
-    {
-        [Key] // Klucz główny w bazie
-        [DatabaseGenerated(DatabaseGeneratedOption.None)] // Używamy własnego GUID, nie auto-number
-        public Guid Id { get; set; } = Guid.NewGuid();
-        string nazwa;
-        float cena;
-        TypRosliny TypRosliny;
-        float poziom_wzrostu; // 1-100?
-        float poziom_nawodnienia; //1-100%
-        float poziom_naslonecznienia; // 1-100%?
-        float wzrost_na_tick;
-        float odwodnienie_na_tick;
-        float zuzycie_energii_slonecznej_na_tick;
 
-        public string Nazwa { get => nazwa; set => nazwa = value; }
-        public TypRosliny TypRosliny1 { get => TypRosliny; set => TypRosliny = value; }
-        public float Poziom_wzrostu { get => poziom_wzrostu; set => poziom_wzrostu = value; }
-        public float Poziom_nawodnienia { get => poziom_nawodnienia; set => poziom_nawodnienia = value; }
-        public float Poziom_naslonecznienia { get => poziom_naslonecznienia; set => poziom_naslonecznienia = value; }
+    
+    public abstract class Rosliny : ITickable, ICloneable, IComparable<Rosliny>
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; set; } = Guid.NewGuid();
+
+        
+
+        [Required]
+        public string Nazwa { get; set; }
+        public TypRosliny Typ { get; set; } 
+
+        
+        private float _cena;
         public float Cena
         {
-            get => cena;
+            get => _cena;
             set
             {
-                if (value < 0)
-                    throw new ArgumentOutOfRangeException(nameof(Cena), "Cena nie może być ujemna.");
-                cena = value;
+                if (value < 0) throw new ArgumentOutOfRangeException(nameof(Cena), "Cena nie może być ujemna.");
+                _cena = value;
             }
         }
 
-        public float Wzrost_na_tick
+        
+        public float PoziomWzrostu { get; set; } = 0;
+        public float PoziomNawodnienia { get; set; } = 20;
+        public float PoziomNaslonecznienia { get; set; } = 30;
+
+        public bool IsDead { get; set; } = false;
+
+        [NotMapped]
+        public bool IsMature => PoziomWzrostu >= 100;
+
+        // --- KONSTRUKTORY ---
+
+        
+        protected Rosliny(string nazwa, TypRosliny typ)
         {
-            get => wzrost_na_tick;
-            set
-            {
-                if (value < 0 || value > 25)
-                    throw new ArgumentOutOfRangeException(
-                        nameof(Wzrost_na_tick),
-                        "Wzrost na tick musi być w zakresie 0–25."
-                    );
-
-                wzrost_na_tick = value;
-            }
+            Nazwa = nazwa;
+            Typ = typ;
         }
 
-        public float Odwodnienie_na_tick
+        // Konstruktor dla Entity Framework (musi być pusty)
+        protected Rosliny() { }
+
+        // --- LOGIKA ---
+
+        public virtual void Tick(FarmState state)
         {
-            get => odwodnienie_na_tick;
-            set
-            {
-                if (value < 0 || value > 25)
-                    throw new ArgumentOutOfRangeException(
-                        nameof(Odwodnienie_na_tick),
-                        "Odwodnienie na tick musi być w zakresie 0–25."
-                    );
+            if (IsDead || IsMature) return;
 
-                odwodnienie_na_tick = value;
+            // 1. WODA (Zużywamy zasoby gleby)
+            if (state.SoilMoisture >= 5)
+            {
+                state.SoilMoisture -= 5;
+                PoziomNawodnienia += 10;
+                if (PoziomNawodnienia > 100) PoziomNawodnienia = 100;
+            }
+            else
+            {
+                PoziomNawodnienia -= 5;
+            }
+
+            // 2. SŁOŃCE (Nie zużywamy zasobów globalnych, tylko z nich korzystamy!)
+            // POPRAWKA: Usunąłem state.LightLevel -= 10;
+            if (state.LightLevel >= 10)
+            {
+                PoziomNaslonecznienia += 10;
+                if (PoziomNaslonecznienia > 100) PoziomNaslonecznienia = 100;
+            }
+            else
+            {
+                PoziomNaslonecznienia -= 10;
+            }
+
+            // 3. ŻYCIE I ŚMIERĆ
+            if (PoziomNawodnienia <= 0 || PoziomNaslonecznienia <= 0)
+            {
+                Die(state);
+            }
+            else
+            {
+                DoSpecificGrowth();
             }
         }
 
-        public float Zuzycie_energii_slonecznej_na_tick
+        protected void Die(FarmState state)
         {
-            get => zuzycie_energii_slonecznej_na_tick;
-            set
-            {
-                if (value < 0 || value > 25)
-                    throw new ArgumentOutOfRangeException(
-                        nameof(Zuzycie_energii_slonecznej_na_tick),
-                        "Wzrost na tick musi być w zakresie 0–25."
-                    );
-
-                zuzycie_energii_slonecznej_na_tick = value;
-            }
+            IsDead = true;
+            Nazwa = "Uschnięty " + Nazwa; // Opcjonalnie: zmiana nazwy
         }
+
+        protected abstract void DoSpecificGrowth();
+
+        // --- INTERFEJSY ---
 
         public object Clone()
         {
-            return new Rosliny
-            {
-                Nazwa = this.Nazwa,
-                Cena = this.Cena,
-                TypRosliny1 = this.TypRosliny1,
-                Poziom_wzrostu = this.Poziom_wzrostu,
-                Poziom_nawodnienia = this.Poziom_nawodnienia,
-                Poziom_naslonecznienia = this.Poziom_naslonecznienia,
-                Wzrost_na_tick = this.Wzrost_na_tick,
-                Odwodnienie_na_tick = this.Odwodnienie_na_tick,
-                Zuzycie_energii_slonecznej_na_tick = this.Zuzycie_energii_slonecznej_na_tick
-            };
+            var clone = (Rosliny)this.MemberwiseClone();
+            clone.Id = Guid.NewGuid();
+            clone.Nazwa = $"{this.Nazwa} (Szczepka)";
+            clone.PoziomWzrostu = 0; // Resetujemy wzrost dla nowej sadzonki
+            return clone;
         }
 
         public int CompareTo(Rosliny? other)
         {
-            if (other == null)
-                return 1;
-
-            return this.Poziom_wzrostu.CompareTo(other.Poziom_wzrostu);
-        }
-
-        public void Tick(FarmState state)
-        {
-            poziom_naslonecznienia-=zuzycie_energii_slonecznej_na_tick;
-            poziom_nawodnienia-= odwodnienie_na_tick;
-            poziom_wzrostu += wzrost_na_tick;
-
+            if (other == null) return 1;
+            return this.PoziomNawodnienia.CompareTo(other.PoziomNawodnienia);
         }
     }
 }

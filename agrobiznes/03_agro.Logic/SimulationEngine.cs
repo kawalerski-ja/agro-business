@@ -56,6 +56,10 @@ namespace _03_agro.Logic
             allObjects.AddRange(_state.Sprinklers);
             allObjects.AddRange(_state.Solars);
             allObjects.AddRange(_state.Sensors);
+            allObjects.AddRange(_state.Tomatoes);
+            allObjects.AddRange(_state.Apples);
+            allObjects.AddRange(_state.Roses);
+            allObjects.AddRange(_state.Cactile);
 
             // KROK 2: Wykonaj logikę
             foreach (var obj in allObjects)
@@ -85,6 +89,11 @@ namespace _03_agro.Logic
                 }
                 
             }
+
+            int removedTomatoes = _state.Tomatoes.RemoveAll(p => p.IsDead);
+            int removedCactile = _state.Cactile.RemoveAll(p => p.IsDead);
+            int removedRoses = _state.Roses.RemoveAll(p => p.IsDead);
+            int removedApples = _state.Apples.RemoveAll(p => p.IsDead);
         }
 
         
