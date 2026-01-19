@@ -57,10 +57,30 @@ namespace _03_agro.Logic
         // --- OBSŁUGA TIMERA ---
         private void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
-            Tick(); // Wywołujemy logikę gry
+            Tick(); // Logika 
 
-            // Testowo: info w konsoli debuggera
-            Console.WriteLine($"TURA {_state.CurrentTick}");
+            // --- PODGLĄD NA ŻYWO ---
+            Console.Clear(); // Czyści ekran
+
+            Console.WriteLine($"=== AGRO SYMULACJA | Tura: {_state.CurrentTick} ===");
+            Console.WriteLine($"KASA: narazie brak | GLEBA (Woda): {_state.SoilMoisture:F1}%");
+            Console.WriteLine("---------------------------------------------");
+
+            // Sprawdźmy pierwszego pomidora (jeśli istnieje)
+            var testPomidor = _state.Tomatoes.FirstOrDefault();
+            if (testPomidor != null)
+            {
+                string status = testPomidor.IsDead ? "MARTWY" : "ŻYJE";
+                Console.WriteLine($"[MONITORING] Pomidor #1: {status}");
+                Console.WriteLine($" - Nawodnienie: {testPomidor.PoziomNawodnienia:F1}%");
+                Console.WriteLine($" - Wzrost:      {testPomidor.PoziomWzrostu:F1}%");
+            }
+            else
+            {
+                Console.WriteLine("[INFO] Brak pomidorów na farmie.");
+            }
+
+            Console.WriteLine("\n[Wciśnij Enter w drugim oknie, aby zamknąć]");
         }
 
         // --- REJESTRACJA OBIEKTÓW (To woła GUI jak coś się kupuje) ---

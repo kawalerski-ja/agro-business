@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>_05_agro.Console</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\01_agro.Core\01_agro.Core.csproj" />
+    <ProjectReference Include="..\02_agro.Data\02_agro.Data.csproj" />
+    <ProjectReference Include="..\03_agro.Logic\03_agro.Logic.csproj" />
+  </ItemGroup>
+
+</Project>
