@@ -7,13 +7,13 @@ namespace _02_agro.Data.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.5.1")]
-    public sealed partial class InicjalizacjaBazy : IMigrationMetadata
+    public sealed partial class StructureReset : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(InicjalizacjaBazy));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(StructureReset));
         
         string IMigrationMetadata.Id
         {
-            get { return "202601142007243_InicjalizacjaBazy"; }
+            get { return "202601191542361_StructureReset"; }
         }
         
         string IMigrationMetadata.Source

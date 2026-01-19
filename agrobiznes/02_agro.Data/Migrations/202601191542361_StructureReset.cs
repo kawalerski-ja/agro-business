@@ -3,7 +3,7 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class AddedCoreTables : DbMigration
+    public partial class StructureReset : DbMigration
     {
         public override void Up()
         {
@@ -23,22 +23,32 @@
                 c => new
                     {
                         Id = c.Guid(nullable: false),
-                        Nazwa = c.String(),
-                        TypRosliny1 = c.Int(nullable: false),
-                        Poziom_wzrostu = c.Single(nullable: false),
-                        Poziom_nawodnienia = c.Single(nullable: false),
-                        Poziom_naslonecznienia = c.Single(nullable: false),
+                        Nazwa = c.String(nullable: false),
+                        Typ = c.Int(nullable: false),
                         Cena = c.Single(nullable: false),
-                        Wzrost_na_tick = c.Single(nullable: false),
-                        Odwodnienie_na_tick = c.Single(nullable: false),
-                        Zuzycie_energii_slonecznej_na_tick = c.Single(nullable: false),
+                        PoziomWzrostu = c.Single(nullable: false),
+                        PoziomNawodnienia = c.Single(nullable: false),
+                        PoziomNaslonecznienia = c.Single(nullable: false),
+                        IsDead = c.Boolean(nullable: false),
+                        Discriminator = c.String(nullable: false, maxLength: 128),
                     })
                 .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.SystemLogs",
+                c => new
+                    {
+                        LogId = c.Int(nullable: false, identity: true),
+                        Message = c.String(),
+                        Date = c.DateTime(nullable: false),
+                    })
+                .PrimaryKey(t => t.LogId);
             
         }
         
         public override void Down()
         {
+            DropTable("dbo.SystemLogs");
             DropTable("dbo.Roslinies");
             DropTable("dbo.Devices");
         }
