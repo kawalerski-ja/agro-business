@@ -28,7 +28,10 @@ namespace _01_agro.Core
 
 
         // 3. Główna lista obiektów symulacji - DODAWAJ OBIEKTY
-
+        public List<Tomato> Tomatoes { get; set; } = new List<Tomato>();
+        public List<Apple> Apples { get; set; } = new List<Apple>();
+        public List<Cactus> Cactile { get; set; } = new List<Cactus>();
+        public List<Rose> Roses { get; set; } = new List<Rose>();
         public List<Sprinkler> Sprinklers { get; set; } = new List<Sprinkler>();
         public List<Solar> Solars { get; set; } = new List<Solar>();
         public List<Sensor> Sensors { get; set; } = new List<Sensor>();
