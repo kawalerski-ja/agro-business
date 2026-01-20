@@ -32,17 +32,41 @@ namespace _01_agro.Core
             // 2a. ANALIZA I ALARM: Woda
             if (WaterReading < CriticalThreshold)
             {
-                // Tutaj sensor reaguje - uruchomienie zraszacza na stanie
-                state.Logger?.Invoke($"[ALARM] Wilgotność gleby krytyczna: {WaterReading}%");
-                
-                 var pump = state.Sprinklers.FirstOrDefault();
-                   if (pump != null) pump.IsOn=true;
-                 
+                // Jest sucho -> Włączamy WSZYSTKIE zraszacze
+                foreach (var zraszacz in state.Sprinklers)
+                {
+                    zraszacz.IsOn = true;
+                }
+
+                // Logujemy alarm raz na jakiś czas (żeby nie spamować co sekundę)
+                if (state.CurrentTick % 5 == 0)
+                    state.Logger?.Invoke($"[agro.Core] Sensor: wykryto suszę ({WaterReading:F1}%). Uruchamiam zraszacze.");
+            }
+            else
+            {
+                // Jest mokro -> Wyłączamy zraszacze (oszczędzamy wodę/zasoby)
+                foreach (var zraszacz in state.Sprinklers)
+                {
+                    zraszacz.IsOn = false;
+                }
             }
             // 2b. ANALIZA I ALARM: UV
-            if (UVReading < CriticalThreshold) {
-                //dodaj uruchomienie lamp UV
-                state.Logger?.Invoke($"[ALARM] Krytyczny poziom UV: {UVReading}%");
+            if (UVReading < CriticalThreshold)
+            {
+                foreach (var lampa in state.Solars)
+                {
+                    lampa.IsOn = true;
+                }
+
+                if (state.CurrentTick % 5 == 0 && state.Solars.Count > 0)
+                    state.Logger?.Invoke($"[agro.Core] Sensor: ciemno ({UVReading}%). Włączam lampy UV.");
+            }
+            else
+            {
+                foreach (var lampa in state.Solars)
+                {
+                    lampa.IsOn = false;
+                }
             }
         }
     }
