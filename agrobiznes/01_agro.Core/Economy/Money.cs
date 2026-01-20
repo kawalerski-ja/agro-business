@@ -16,9 +16,9 @@ namespace _01_agro.Core.Economy
     public class Money
     {
         [JsonInclude]
-        public decimal Amount { get; }
+        public decimal Amount { get; set; }
         [JsonInclude]
-        public string Currency { get; }
+        public string Currency { get; set; }
 
   
         public Money(decimal amount, string currency)
@@ -30,7 +30,7 @@ namespace _01_agro.Core.Economy
         }
         public Money(decimal amount) : this(amount, "PLN") { }
 
-        private Money() { }
+        public Money() { }
 
         public override string ToString()
         {
