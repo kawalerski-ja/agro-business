@@ -28,13 +28,22 @@ namespace _02_agro.Data
             {
                 return null; // Brak pliku = brak zapisu
             }
+            try
+            {
+                string jsonString = File.ReadAllText(FilePath);
 
-            string jsonString = File.ReadAllText(FilePath);
+                // Tutaj magia dzieje się sama - JSON widzi listę Tomatoes i ładuje do niej pomidory
+                var state = JsonSerializer.Deserialize<FarmState>(jsonString);
 
-            // Tutaj magia dzieje się sama - JSON widzi listę Tomatoes i ładuje do niej pomidory
-            var state = JsonSerializer.Deserialize<FarmState>(jsonString);
-
-            return state;
+                return state;
+            }
+            catch(Exception ex) 
+            {
+                File.Delete(FilePath);
+                System.Diagnostics.Debug.WriteLine($"[BŁĄD ZAPISU]: Nie udało się wczytać gry. {ex.Message}");
+                return null;
+            }
+            
         }
     }
 }

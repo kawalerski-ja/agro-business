@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace _01_agro.Core.Economy
@@ -14,8 +15,10 @@ namespace _01_agro.Core.Economy
     [ComplexType]
     public class Money
     {
-        public decimal Amount { get; }
-        public string Currency { get; }
+        [JsonInclude]
+        public decimal Amount { get; set; }
+        [JsonInclude]
+        public string Currency { get; set; }
 
   
         public Money(decimal amount, string currency)
@@ -26,6 +29,8 @@ namespace _01_agro.Core.Economy
             Currency = currency;
         }
         public Money(decimal amount) : this(amount, "PLN") { }
+
+        public Money() { }
 
         public override string ToString()
         {
