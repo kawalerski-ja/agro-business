@@ -147,7 +147,7 @@ namespace _03_agro.Logic
         {
             if (_state.Tomatoes.Count == 0 && _state.Roses.Count==0 && _state.Cactile.Count==0 && _state.Apples.Count==0)
             {
-                _state.SoilMoisture = 30;
+                _state.SoilMoisture = 100;
                 Random rnd = new Random();
                 _state.LightLevel = rnd.Next(30, 90);
                 _logger.AddLog("[agro.Logic]: Wykryto pustą farmę. Tworzenie pakietu startowego...");
