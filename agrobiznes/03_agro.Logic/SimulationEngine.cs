@@ -16,7 +16,6 @@ namespace _03_agro.Logic
         private LogRepo _logger;
         private const int BillingIntervalTicks = 30;
 
-        public FarmState State => _state;
         public LogRepo Logger => _logger;
 
         private System.Timers.Timer _gameTimer;
