@@ -11,8 +11,14 @@ namespace _03_agro.Logic
     public class SimulationEngine
     {
         private FarmState _state;
+        public FarmState State => _state;
         private LogRepo _logger;
+        public LogRepo LoggerRepo => _logger;
+
         private System.Timers.Timer _gameTimer;
+
+        public event Action<FarmState>? TickHappened;
+
 
         // --- KONSTRUKTOR ---
         public SimulationEngine()
@@ -228,6 +234,9 @@ namespace _03_agro.Logic
             _state.Cactile.RemoveAll(p => p.IsDead);
             _state.Roses.RemoveAll(p => p.IsDead);
             _state.Apples.RemoveAll(p => p.IsDead);
+
+            TickHappened?.Invoke(_state); //reagowanie GUI
         }
+
     } 
 } 
