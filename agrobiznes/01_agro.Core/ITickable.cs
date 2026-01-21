@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace _01_agro.Core
 {
+    /// <summary>
+    /// Interfejs ITickable implementuje odświeżanie symulacji przez co umożliwia jej przebieg w czasie
+    /// </summary>
     public interface ITickable
     {
         // Metoda wywoływana przez silnik w każdej klatce symulacji

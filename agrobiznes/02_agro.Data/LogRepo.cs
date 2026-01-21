@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace _02_agro.Data
 {
+    /// <summary>
+    /// Klasa LogRepo odpowiada za sam zapis logów do tabeli
+    /// </summary>
         public class LogRepo
         {
             public void AddLog(string message)

@@ -8,6 +8,9 @@ using System.Data.Entity;
 
 namespace _02_agro.Data
 {
+    /// <summary>
+    /// Klasa FarmContent tworzy tabele z logami
+    /// </summary>
     public class FarmContext : DbContext
     {
 

@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace _01_agro.Core
 {
+    /// <summary>
+    /// Klasa Rośliny - implementuje interfejsy "odświeżania", porównywania i klonowania
+    /// Instancje tej klasy to faktycznie rośliny, które posiadają pewne cechy umożliwiające symulację ich rozwoju:
+    /// wzrost, nawodnienie oraz naslonecznienie
+    /// </summary>
     public enum TypRosliny
     {
         Warzywo,
@@ -46,7 +51,7 @@ namespace _01_agro.Core
             get => wzrost_na_tick;
             set
             {
-                if (value < 0 || value > 25)
+                if (value < 0 || value > 10)
                     throw new ArgumentOutOfRangeException(
                         nameof(Wzrost_na_tick),
                         "Wzrost na tick musi być w zakresie 0–25."
