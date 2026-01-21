@@ -1,4 +1,5 @@
-﻿using System;
+﻿using _01_agro.Core.Economy;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,10 +25,18 @@ namespace _01_agro.Core
                 // 2. Zabezpieczenie
                 if (state.LightLevel > 100) state.LightLevel = 100;
 
-                // 3. Pobierz opłatę za prąd
+                // 3. Pobierz opłatę za prąd (Tu jest problem bo placimy każdego ticka a powinniśmy raz na na miesiąc )
+
+                /*state.Finance.Apply(new PurchaseTransaction(
+                    new Money(1m, "PLN"),
+                    TransactionCategory.Energy, 
+                    "Koszt energii - lampa UV"
+                    )
+                );*/
+
 
             }
-            
+
         }
     }
 }
