@@ -23,9 +23,9 @@ namespace _01_agro.Core
         string nazwa;
         float cena;
         TypRosliny TypRosliny;
-        float poziom_wzrostu; // 1-100?
-        float poziom_nawodnienia; //1-100%
-        float poziom_naslonecznienia; // 1-100%?
+        float poziom_wzrostu; // 1-100 (%)
+        float poziom_nawodnienia; //1-100 (%)
+        float poziom_naslonecznienia; // 1-100 (%)
         float wzrost_na_tick;
         float odwodnienie_na_tick;
         float zuzycie_energii_slonecznej_na_tick;
