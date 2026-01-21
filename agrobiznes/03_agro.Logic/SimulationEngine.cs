@@ -12,7 +12,6 @@ namespace _03_agro.Logic
     public class SimulationEngine
     {
         private FarmState _state;
-        public FarmState State => _state;
         private LogRepo _logger;
         private const int BillingIntervalTicks = 30;
 
