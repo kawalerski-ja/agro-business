@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using _01_agro.Core;
 using _02_agro.Data;
+using _01_agro.Core.Economy;
+
 
 namespace _03_agro.Logic
 {
@@ -17,9 +19,33 @@ namespace _03_agro.Logic
             _logger = logger;
         }
 
+        private bool TryPay(float koszt, TransactionCategory category, string description, out string message)
+        {
+            var kosztMoney = new Money((decimal)koszt, "PLN");
+
+            try
+            {
+                _state.Finance.Apply(new PurchaseTransaction(
+                    kosztMoney,
+                    category,
+                    description
+                ));
+
+                message = string.Empty;
+                return true;
+            }
+            catch (InvalidOperationException)
+            {
+                message = $"BŁĄD: Brak środków. Koszt: {kosztMoney}, saldo: {_state.Finance.Account.Balance}";
+                _logger.AddLog(message);
+                return false;
+            }
+        }
+
         // ==========================================
         // 1. KUPOWANIE (PROSTE)
         // ==========================================
+
 
         public string KupPomidory(int ilosc)
         {
@@ -28,16 +54,16 @@ namespace _03_agro.Logic
             float koszt = wzorzec.Cena * ilosc; // "Cena" to Twoja cena zakupu z klasy Roslina
 
             // [MIEJSCE NA IF FINANSOWY] 
-            // if (state.Account.Balance < koszt) return "Brak środków";
+           if (!TryPay(koszt, TransactionCategory.Seeds, $"Zakup: Pomidory x{ilosc}", out var err))
+            {
+                return err;
+            }
 
-            // --- LOGIKA ZAKUPU ---
-            // _state.Account.Withdraw(koszt); // TODO: Odkomentować jak będą finanse
 
             for (int i = 0; i < ilosc; i++)
             {
                 // Tworzymy nową sztukę
                 var t = new Tomato();
-
                 _state.Tomatoes.Add(t);
             }
 
@@ -50,6 +76,13 @@ namespace _03_agro.Logic
         {
             var wzorzec = new Apple();
             float koszt = wzorzec.Cena * ilosc;
+
+            // [IF FINANSOWY] 
+            if (!TryPay(koszt, TransactionCategory.Seeds, $"Zakup: Jabłka x{ilosc}", out var err))
+            {
+                return err;
+            }
+
             for (int i = 0; i < ilosc; i++)
             {
                 // Tworzymy nową sztukę
@@ -66,6 +99,13 @@ namespace _03_agro.Logic
         {
             var wzorzec = new Cactus();
             float koszt = wzorzec.Cena * ilosc;
+
+            // [IF FINANSOWY] 
+            if (!TryPay(koszt, TransactionCategory.Seeds, $"Zakup: Kaktusy x{ilosc}", out var err))
+            {
+                return err;
+            }
+
             for (int i = 0; i < ilosc; i++)
             {
                 // Tworzymy nową sztukę
@@ -82,6 +122,13 @@ namespace _03_agro.Logic
         {
             var wzorzec = new Rose();
             float koszt = wzorzec.Cena * ilosc;
+
+            // [IF FINANSOWY] 
+            if (!TryPay(koszt, TransactionCategory.Seeds, $"Zakup: Róży x{ilosc}", out var err))
+            {
+                return err;
+            }
+
             for (int i = 0; i < ilosc; i++)
             {
                 // Tworzymy nową sztukę
@@ -124,7 +171,12 @@ namespace _03_agro.Logic
             if (iloscCalkowita > 0)
             {
                 // --- WPŁATA NA KONTO ---
-                // _state.Account.Deposit(zarobekCalkowity); // TODO
+                var revenueMoney = new Money((decimal)zarobekCalkowity, "PLN");
+                _state.Finance.Apply(new SaleTransaction(
+                    revenueMoney,
+                    TransactionCategory.Sales,
+                    $"Sprzedaż roślin: {iloscCalkowita} szt."
+                ));
 
                 string msg = $"SKUP: Sprzedano {iloscCalkowita} roślin za {zarobekCalkowity:C}.";
                 _logger.AddLog(msg);
@@ -178,12 +230,13 @@ namespace _03_agro.Logic
         {
             float koszt = maszyna.Cena;
 
-            // 1. Walidacja finansowa (Zostawiam miejsce)
-            // if (_state.GameAccount.Balance.Amount < koszt) 
-            //      return $"BŁĄD: Maszyna kosztuje {koszt:C}, a masz {_state.GameAccount.Balance.Amount:C}";
 
-            // 2. Pobranie pieniędzy (TODO)
-            // _state.GameAccount.Withdraw(koszt); 
+            // 1. Walidacja finansowa (Zostawiam miejsce) + 2. Pobranie pieniędzy
+            if (!TryPay(koszt, TransactionCategory.Other, $"Zakup maszyny: {maszyna.Name}", out var err))
+            {
+                return err;
+            }
+
 
             // 3. Dodanie do farmy
             listaDocelowa.Add(maszyna);

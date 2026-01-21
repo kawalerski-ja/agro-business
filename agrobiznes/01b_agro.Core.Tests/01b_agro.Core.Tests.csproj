@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\01_agro.Core\01_agro.Core.csproj" />
+    <ProjectReference Include="..\03_agro.Logic\03_agro.Logic.csproj" />
   </ItemGroup>
 
 </Project>

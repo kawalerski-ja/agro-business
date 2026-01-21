@@ -173,4 +173,40 @@ public class TaxTests
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new FlatTax(1.5m));
     }
+
+    [TestClass]
+    public class FinanceEngineTests
+    {
+        [TestMethod]
+        public void Apply_Should_Update_Balance_And_Add_Transaction()
+        {
+            var acc = new Account(new Money(100m));
+            var engine = new FinanceEngine(acc, new NoTax());
+
+            engine.Apply(new PurchaseTransaction(new Money(30m), TransactionCategory.Energy, "Prąd"));
+
+            Assert.AreEqual(70m, engine.Account.Balance.Amount);
+            Assert.AreEqual(1, engine.Transactions.Count);
+        }
+
+        [TestMethod]
+        public void GetReport_Should_Return_Correct_Sums()
+        {
+            var now = DateTimeOffset.UtcNow;
+
+            var acc = new Account(new Money(0m));
+            var engine = new FinanceEngine(acc, new NoTax());
+
+            engine.Apply(new SaleTransaction(new Money(200m), TransactionCategory.Sales, "Sprzedaż", now));
+            engine.Apply(new PurchaseTransaction(new Money(50m), TransactionCategory.Energy, "Prąd", now));
+
+            var report = engine.GetReport(now.AddMinutes(-1), now.AddMinutes(1));
+
+            Assert.AreEqual(200m, report.Revenue.Amount);
+            Assert.AreEqual(50m, report.Costs.Amount);
+            Assert.AreEqual(150m, report.Profit.Amount);
+            Assert.AreEqual(0m, report.Tax.Amount);
+            Assert.AreEqual(150m, report.NetProfit.Amount);
+        }
+    }
 }

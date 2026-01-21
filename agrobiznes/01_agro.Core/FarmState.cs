@@ -35,13 +35,22 @@ namespace _01_agro.Core
         public List<Solar> Solars { get; set; } = new List<Solar>();
         public List<Sensor> Sensors { get; set; } = new List<Sensor>();
 
-        public Account Account { get; set; } = new Account();
+        [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+        [JsonIgnore]
+        public FinanceEngine Finance { get; set; }
+
+
+        public decimal BalanceAmount { get; set; } = 1000m;
+        public string BalanceCurrency { get; set; } = "PLN";
+
         // Konstruktor inicjalizujący listę (żeby uniknąć błędów null)
         public FarmState()
         {
-            
+            Finance = new FinanceEngine(
+                new Account(new Money(BalanceAmount, BalanceCurrency)),
+                new NoTax());
         }
 
-        
+
     }
 }
