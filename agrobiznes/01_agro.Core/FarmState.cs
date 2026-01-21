@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace _01_agro.Core
 {   //klasa FarmState czyli "stan świata": będzie przechowywała roślinki i maszyny, tick, pieniądze
+
     public class FarmState
     {
         // 1. Czas symulacji

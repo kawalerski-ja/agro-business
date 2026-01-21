@@ -8,8 +8,8 @@ namespace _01_agro.Core
 {
     /// <summary>
     /// Klasa Rośliny - implementuje interfejsy "odświeżania", porównywania i klonowania
-    /// Instancje tej klasy to faktycznie rośliny, które posiadają pewne cechy umożliwiające symulację ich rozwoju:
-    /// wzrost, nawodnienie oraz naslonecznienie
+    /// Instancje tej klasy to faktyczne rośliny, które posiadają pewne cechy umożliwiające symulację ich rozwoju:
+    /// wzrost, nawodnienie oraz naslonecznienie, które są monitorowane przez wartości pół *NazwaCechy*_na_tick
     /// </summary>
     public enum TypRosliny
     {
