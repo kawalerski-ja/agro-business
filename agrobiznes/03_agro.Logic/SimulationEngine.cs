@@ -12,6 +12,7 @@ namespace _03_agro.Logic
     public class SimulationEngine
     {
         private FarmState _state;
+        public FarmState State => _state;
         private LogRepo _logger;
         private const int BillingIntervalTicks = 30;
 
@@ -74,6 +75,9 @@ namespace _03_agro.Logic
             _state.Logger?.Invoke($"[FINANSE] Rozliczono koszty operacyjne za {BillingIntervalTicks} ticków (woda: {waterTotal:0.00} PLN, energia: {energyTotal:0.00} PLN).");
         }
 
+
+
+        public event Action<FarmState>? TickHappened;
 
 
         // --- KONSTRUKTOR ---
@@ -312,6 +316,8 @@ namespace _03_agro.Logic
             _state.Roses.RemoveAll(p => p.IsDead);
             _state.Apples.RemoveAll(p => p.IsDead);
 
+            TickHappened?.Invoke(_state); //reagowanie GUI
         }
+
     } 
 } 

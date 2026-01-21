@@ -5,8 +5,191 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:_04_agro.GUI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="MainWindow" Height="495" Width="978">
+    <Grid Background="#1E1E1E"
+      Margin="10"
+      TextElement.Foreground="White">
+
+        <!-- ZASOBY – style wspólne -->
+        <Grid.Resources>
+
+            <!-- Domyślny styl tekstu (TextBlock) -->
+            <Style TargetType="TextBlock">
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="FontSize" Value="13"/>
+            </Style>
+
+            <!-- Domyślny styl etykiet (Label) -->
+            <Style TargetType="Label">
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="FontSize" Value="13"/>
+            </Style>
+
+            <!-- Styl nagłówków -->
+            <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="FontSize" Value="18"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="Margin" Value="0,0,0,10"/>
+            </Style>
+
+            <!-- Styl paneli (karty) -->
+            <Style x:Key="CardBorderStyle" TargetType="Border">
+                <Setter Property="CornerRadius" Value="10"/>
+                <Setter Property="Background" Value="#2D2D30"/>
+                <Setter Property="Padding" Value="12"/>
+                <Setter Property="Margin" Value="6"/>
+            </Style>
+
+            <!-- Styl przycisków -->
+            <Style TargetType="Button">
+                <Setter Property="Height" Value="36"/>
+                <Setter Property="Margin" Value="0,6,0,0"/>
+                <Setter Property="Background" Value="#3E3E42"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="BorderBrush" Value="#5A5A5A"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Padding" Value="12,6"/>
+                <Setter Property="Cursor" Value="Hand"/>
+            </Style>
+
+            <!-- Styl ProgressBar -->
+            <Style TargetType="ProgressBar">
+                <Setter Property="Height" Value="18"/>
+                <Setter Property="Margin" Value="0,4,0,0"/>
+            </Style>
+
+            <!-- Styl logów (ListBox) -->
+            <Style TargetType="ListBox">
+                <Setter Property="Background" Value="#1E1E1E"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="BorderBrush" Value="#5A5A5A"/>
+                <Setter Property="BorderThickness" Value="1"/>
+            </Style>
+
+            <!-- Styl elementów listy (ListBoxItem) -->
+            <Style TargetType="ListBoxItem">
+                <Setter Property="Foreground" Value="White"/>
+            </Style>
+
+            <!-- Styl pól tekstowych (jeśli dodasz sklep/ilość) -->
+            <Style TargetType="TextBox">
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Background" Value="#1E1E1E"/>
+                <Setter Property="BorderBrush" Value="#5A5A5A"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Padding" Value="6,2"/>
+            </Style>
+
+            <!-- Styl ComboBox (jeśli dodasz wybór rośliny) -->
+            <Style TargetType="ComboBox">
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Background" Value="#1E1E1E"/>
+                <Setter Property="BorderBrush" Value="#5A5A5A"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Padding" Value="6,2"/>
+                <Setter Property="Margin" Value="0,6,0,0"/>
+            </Style>
+
+        </Grid.Resources>
+
+        <!-- PODZIAŁ OKNA -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ================= FARMA ================= -->
+        <Border Grid.Column="0"
+        CornerRadius="10"
+        Background="#252526"
+        Padding="12"
+        Margin="6">
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Nagłówek -->
+                <TextBlock Text="FARMA – siatka pól uprawnych"
+                   Style="{StaticResource HeaderTextStyle}"/>
+
+                <!-- SIATKA PÓL -->
+                <Border Grid.Row="1"
+                CornerRadius="10"
+                Background="#1E1E1E"
+                Padding="10">
+
+                    <!-- Siatka 10x10 pól -->
+                    <UniformGrid x:Name="FarmGrid"
+                         Rows="10"
+                         Columns="10"/>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- ================= PANELE ================= -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- PANEL STATYSTYK -->
+            <Border Grid.Row="0" Style="{StaticResource CardBorderStyle}">
+                <StackPanel>
+                    <TextBlock Text="Statystyki" Style="{StaticResource HeaderTextStyle}"/>
+
+                    <TextBlock Text="Średni wzrost roślin"/>
+                    <ProgressBar x:Name="GrowthBar" Value="0"/>
+
+                    <TextBlock Text="Średnie nawodnienie" Margin="0,10,0,0"/>
+                    <ProgressBar x:Name="WaterBar" Value="0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- PANEL EKONOMII -->
+            <Border Grid.Row="1" Style="{StaticResource CardBorderStyle}">
+                <StackPanel>
+                    <TextBlock Text="Ekonomia" Style="{StaticResource HeaderTextStyle}"/>
+
+                    <TextBlock x:Name="BalanceText"
+                        Text="Stan konta: 1000 zł"
+                        Foreground="LightGreen"
+                        FontSize="16"
+                        FontWeight="SemiBold"/>
+
+
+                    <Button Content="Kup"
+                           Click="Buy_Click"/>
+
+                    <Button Content="Sprzedaj"
+                           Click="Sell_Click"/>
+
+                </StackPanel>
+            </Border>
+
+            <!-- PANEL LOGÓW -->
+            <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}">
+                <StackPanel>
+                    <TextBlock Text="Logi systemowe"
+                   Style="{StaticResource HeaderTextStyle}"/>
+
+                    <!-- Lista logów systemowych -->
+                    <ListBox x:Name="LogList"
+                 MinHeight="200">
+                        <ListBoxItem Content="[INFO] System uruchomiony"/>
+                        <ListBoxItem Content="[INFO] Oczekiwanie na akcję użytkownika"/>
+                    </ListBox>
+                </StackPanel>
+            </Border>
+
+
+        </Grid>
 
     </Grid>
+
 </Window>
