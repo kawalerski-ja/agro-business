@@ -1,9 +1,10 @@
-﻿using System;
+﻿using _01_agro.Core;
+using _01_agro.Core.Economy;
+using _02_agro.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Timers; // Do Timera
-using _01_agro.Core;
-using _02_agro.Data;
 
 
 namespace _03_agro.Logic
@@ -11,14 +12,80 @@ namespace _03_agro.Logic
     public class SimulationEngine
     {
         private FarmState _state;
+        public FarmState State => _state;
         private LogRepo _logger;
+        private const int BillingIntervalTicks = 30;
+
+        public FarmState State => _state;
+        public LogRepo Logger => _logger;
+
         private System.Timers.Timer _gameTimer;
+        
+        public Market Market { get; private set; }
+
+
+        // Meotda do sprawdzania uruchomeina finance engine
+        private void EnsureFinanceInitialized()
+        {
+            if (_state.Finance == null)
+            {
+                _state.Finance = new FinanceEngine(
+                    new Account(new Money(_state.BalanceAmount, _state.BalanceCurrency)),
+                    new NoTax()
+                );
+            }
+        }
+
+        // Metoda do naliczania kosztów operacyjnych
+        private void ApplyOperatingCostsIfDue()
+        {
+            // rozliczamy koszty co 30 ticków
+            if (_state.CurrentTick % BillingIntervalTicks != 0)
+                return;
+
+            int onSprinklers = _state.Sprinklers.Count(s => s.IsOn);
+            int onLamps = _state.Solars.Count(l => l.IsOn);
+
+            // stawki (dobierz jak chcesz)
+            decimal waterCostPerDevice = 0.30m;
+            decimal energyCostPerDevice = 0.50m;
+
+            decimal waterTotal = onSprinklers * waterCostPerDevice;
+            decimal energyTotal = onLamps * energyCostPerDevice;
+
+            // jedna transakcja na wodę i jedna na energię (max 2 wpisy/30 ticków)
+            if (waterTotal > 0)
+            {
+                _state.Finance.Apply(new PurchaseTransaction(
+                    new Money(waterTotal, "PLN"),
+                    TransactionCategory.Water,
+                    $"Koszty wody ({BillingIntervalTicks} ticków): {onSprinklers} aktywnych zraszaczy"
+                ));
+            }
+
+            if (energyTotal > 0)
+            {
+                _state.Finance.Apply(new PurchaseTransaction(
+                    new Money(energyTotal, "PLN"),
+                    TransactionCategory.Energy,
+                    $"Koszty energii ({BillingIntervalTicks} ticków): {onLamps} aktywnych lamp UV"
+                ));
+            }
+
+            _state.Logger?.Invoke($"[FINANSE] Rozliczono koszty operacyjne za {BillingIntervalTicks} ticków (woda: {waterTotal:0.00} PLN, energia: {energyTotal:0.00} PLN).");
+        }
+
+
+
+        public event Action<FarmState>? TickHappened;
+
 
         // --- KONSTRUKTOR ---
         public SimulationEngine()
         {
             _logger = new LogRepo();
             _state = GameSaver.LoadGame();
+
 
             if (_state == null)
             {
@@ -30,6 +97,13 @@ namespace _03_agro.Logic
             {
                 _logger.AddLog("Wczytano zapis gry.");
             }
+
+            // Inicjalizacja silnika finansowego
+            EnsureFinanceInitialized();
+
+            // Inicjalizacja marketu
+            Market = new Market(_state, _logger);
+
             // Inicjalizacja farmy - kod wykona się tylko gdy nie będzie ani jednego pomidora
             InitializeStarterFarm();
 
@@ -68,6 +142,10 @@ namespace _03_agro.Logic
             Console.WriteLine("==============================================");
             Console.WriteLine($"   AGRO-BIZNES SYMULACJA | Tura: {_state.CurrentTick}");
             Console.WriteLine("==============================================");
+
+            // Finanse
+            Console.WriteLine($"[FINANSE] Saldo: {_state.Finance.Account.Balance}");
+
 
             // 1. Środowisko
             Console.ForegroundColor = ConsoleColor.Cyan;
@@ -196,7 +274,12 @@ namespace _03_agro.Logic
             allObjects.AddRange(_state.Roses);
             allObjects.AddRange(_state.Cactile);
 
-            // 2. Wykonujemy logikę
+            // 2. Naliczanie kosztów operacyjnych (przed wykonaniem ticków obiektów)
+            //     Dzięki temu naliczenie uwzględnia stan urządzeń na początku tury
+            //     (np. test oczekuje obciążenia gdy urządzenia były włączone przed tickiem).
+            ApplyOperatingCostsIfDue();
+
+            // 3. Wykonujemy logikę obiektów
             foreach (var obj in allObjects)
             {
                 try
@@ -208,6 +291,10 @@ namespace _03_agro.Logic
                     _state.Logger?.Invoke($"Błąd obiektu {obj.GetType().Name}: {ex.Message}");
                 }
             }
+
+            //Aktualizacja stanu konta w FarmState
+            _state.BalanceAmount = _state.Finance.Account.Balance.Amount;
+            _state.BalanceCurrency = _state.Finance.Account.Balance.Currency;
 
             // 3. AutoSave (co 10 tur)
             if (_state.CurrentTick % 10 == 0)
@@ -228,6 +315,9 @@ namespace _03_agro.Logic
             _state.Cactile.RemoveAll(p => p.IsDead);
             _state.Roses.RemoveAll(p => p.IsDead);
             _state.Apples.RemoveAll(p => p.IsDead);
+
+            TickHappened?.Invoke(_state); //reagowanie GUI
         }
+
     } 
 } 
