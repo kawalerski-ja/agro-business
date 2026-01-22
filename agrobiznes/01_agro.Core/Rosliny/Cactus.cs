@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace _01_agro.Core
 {
+    /// <summary>
+    /// Roślina - kaktus z atrybutami
+    /// </summary>
     public class Cactus : Rosliny
     {
         public Cactus():base("Kaktus",TypRosliny.Sukulent) {

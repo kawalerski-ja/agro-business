@@ -2,7 +2,9 @@
 {
     using System;
     using System.Data.Entity.Migrations;
-    
+    /// <summary>
+    /// Klasa ZaktualizujStatusFarmy odpowiada za aktualizację cen przy odświeżaniu
+    /// </summary>
     public partial class UpdatedFarmState : DbMigration
     {
         public override void Up()

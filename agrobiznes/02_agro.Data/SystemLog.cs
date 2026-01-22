@@ -9,6 +9,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace _02_agro.Data
 {
+    /// <summary>
+    /// Klasa WpisWSystemie tworzy szablon z atrybutów, który będzie zapisywany jako wpis
+    /// </summary>
     public class SystemLog
     {
         [Key]

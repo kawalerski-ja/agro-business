@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace _01_agro.Core
 {
+    /// <summary>
+    /// Roślina - Pomidor z atrybutami
+    /// </summary>
     public class Tomato : Rosliny
     {
         public Tomato(): base("Pomidor",TypRosliny.Warzywo) {

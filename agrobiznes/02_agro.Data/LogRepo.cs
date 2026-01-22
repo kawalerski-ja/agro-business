@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace _02_agro.Data
 {
+    /// <summary>
+    /// Klasa ta zapisuje powiadomienia/aktualizacje do pliku
+    /// </summary>
         public class LogRepo
         {
             private readonly List<string> _logs = new();

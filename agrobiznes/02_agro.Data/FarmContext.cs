@@ -9,6 +9,9 @@ using _01_agro.Core;
 
 namespace _02_agro.Data
 {
+    /// <summary>
+    /// Klasa ta tworzy liste powiadomień/aktualizacji, roślin oraz urządzeń
+    /// </summary>
     public class FarmContext : DbContext
     {
 

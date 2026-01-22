@@ -2,7 +2,9 @@
 {
     using System;
     using System.Data.Entity.Migrations;
-    
+    /// <summary>
+    /// Klasa ResetujStrukturę odpowiadajaca za ustawienia początkowe środkowiska symulacji
+    /// </summary>
     public partial class StructureReset : DbMigration
     {
         public override void Up()

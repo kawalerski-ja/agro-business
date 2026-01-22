@@ -9,6 +9,9 @@ using System.Timers; // Do Timera
 
 namespace _03_agro.Logic
 {
+    /// <summary>
+    /// Klasa SilnikSymulacji odpowiada za działanie środowiska symulacji
+    /// </summary>
     public class SimulationEngine
     {
         private FarmState _state;
