@@ -59,4 +59,38 @@ namespace _01_agro.Core.Economy
 
 
     }
+
+    /// <summary>
+    /// Porównuje transakcje po dacie (najpierw najnowsze).
+    /// </summary>
+    public sealed class TransactionByDateDescComparer : IComparer<Transaction>
+    {
+        public int Compare(Transaction? x, Transaction? y)
+        {
+            if (ReferenceEquals(x, y)) return 0;
+            if (x is null) return 1;
+            if (y is null) return -1;
+
+            return y.OccurredAt.CompareTo(x.OccurredAt); // DESC
+        }
+    }
+
+    /// <summary>
+    /// Porównuje transakcje po kwocie (największe najpierw).
+    /// </summary>
+    public sealed class TransactionByAmountDescComparer : IComparer<Transaction>
+    {
+        public int Compare(Transaction? x, Transaction? y)
+        {
+            if (ReferenceEquals(x, y)) return 0;
+            if (x is null) return 1;
+            if (y is null) return -1;
+
+            // Jeśli waluty różne, to nie porównujemy "na pałę"
+            if (!string.Equals(x.Amount.Currency, y.Amount.Currency, StringComparison.Ordinal))
+                return string.Compare(x.Amount.Currency, y.Amount.Currency, StringComparison.Ordinal);
+
+            return y.Amount.Amount.CompareTo(x.Amount.Amount); // DESC
+        }
+    }
 }
