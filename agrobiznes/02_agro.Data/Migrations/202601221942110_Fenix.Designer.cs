@@ -7,13 +7,13 @@ namespace _02_agro.Data.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.5.1")]
-    public sealed partial class FixFarmContextSchema : IMigrationMetadata
+    public sealed partial class Fenix : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(FixFarmContextSchema));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Fenix));
         
         string IMigrationMetadata.Id
         {
-            get { return "202601212127339_FixFarmContextSchema"; }
+            get { return "202601221942110_Fenix"; }
         }
         
         string IMigrationMetadata.Source

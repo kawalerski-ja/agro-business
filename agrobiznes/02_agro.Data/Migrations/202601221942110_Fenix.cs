@@ -3,7 +3,7 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class StructureReset : DbMigration
+    public partial class Fenix : DbMigration
     {
         public override void Up()
         {
@@ -14,6 +14,7 @@
                         Id = c.Guid(nullable: false),
                         Name = c.String(),
                         IsOn = c.Boolean(nullable: false),
+                        Cena = c.Single(nullable: false),
                         Discriminator = c.String(nullable: false, maxLength: 128),
                     })
                 .PrimaryKey(t => t.Id);
@@ -25,7 +26,10 @@
                         Id = c.Guid(nullable: false),
                         Nazwa = c.String(nullable: false),
                         Typ = c.Int(nullable: false),
+                        Row = c.Int(nullable: false),
+                        Col = c.Int(nullable: false),
                         Cena = c.Single(nullable: false),
+                        CenaSprzedazy = c.Single(nullable: false),
                         PoziomWzrostu = c.Single(nullable: false),
                         PoziomNawodnienia = c.Single(nullable: false),
                         PoziomNaslonecznienia = c.Single(nullable: false),
