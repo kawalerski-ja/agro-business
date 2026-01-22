@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace _01_agro.Core
 {
-    public class Apple:Rosliny
+    public class Apple:Rosliny, IPositioned
     {
+     
         public Apple():base("Jabłoń",TypRosliny.Owoc) {
             Cena = 10;
             CenaSprzedazy = 15;

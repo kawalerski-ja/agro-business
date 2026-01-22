@@ -12,16 +12,16 @@ namespace _03_agro.Logic
     public class SimulationEngine
     {
         private FarmState _state;
-        public FarmState State => _state;
         private LogRepo _logger;
         private const int BillingIntervalTicks = 30;
 
         public FarmState State => _state;
-        public LogRepo Logger => _logger;
+        public _02_agro.Data.LogRepo LoggerRepo => _logger;
 
         private System.Timers.Timer _gameTimer;
         
         public Market Market { get; private set; }
+        public event Action<FarmState>? TickHappened;
 
 
         // Meotda do sprawdzania uruchomeina finance engine
@@ -77,7 +77,7 @@ namespace _03_agro.Logic
 
 
 
-        public event Action<FarmState>? TickHappened;
+     
 
 
         // --- KONSTRUKTOR ---
@@ -85,6 +85,8 @@ namespace _03_agro.Logic
         {
             _logger = new LogRepo();
             _state = GameSaver.LoadGame();
+            Market = new Market(_state, _logger);
+
 
 
             if (_state == null)
@@ -110,6 +112,8 @@ namespace _03_agro.Logic
 
             // Podpięcie loggera
             _state.Logger = (message) => _logger.AddLog(message);
+            Market = new Market(_state, _logger);
+
 
             // Konfiguracja Timera
             _gameTimer = new System.Timers.Timer(1000); // 1 sekunda
@@ -136,12 +140,13 @@ namespace _03_agro.Logic
         private void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
             Tick(); // Wykonaj logikę
+            TickHappened?.Invoke(_state); //reagowanie GUI
 
-            // --- DASHBOARD KONSOLOWY ---
+            /*// --- DASHBOARD KONSOLOWY ---
             Console.Clear();
             Console.WriteLine("==============================================");
             Console.WriteLine($"   AGRO-BIZNES SYMULACJA | Tura: {_state.CurrentTick}");
-            Console.WriteLine("==============================================");
+            Console.WriteLine("==============================================");*/
 
             // Finanse
             Console.WriteLine($"[FINANSE] Saldo: {_state.Finance.Account.Balance}");
@@ -316,8 +321,48 @@ namespace _03_agro.Logic
             _state.Roses.RemoveAll(p => p.IsDead);
             _state.Apples.RemoveAll(p => p.IsDead);
 
-            TickHappened?.Invoke(_state); //reagowanie GUI
+            TickHappened?.Invoke(_state);
+
         }
 
-    } 
+        public bool PlantAt(int row, int col, string plantType)
+        {
+            // Zwykła walidacja pozycji
+            if (IsOccupied(row, col))
+            {
+                _logger.AddLog($"[ENGINE] Pole ({row},{col}) zajęte – nie można posadzić {plantType}.");
+                return false;
+            }
+
+            ITickable plant = plantType switch
+            {
+                "Tomato" => new Tomato(),
+                "Rose" => new Rose(),
+                "Cactus" => new Cactus(),
+                _ => new Tomato()
+            };
+
+            if (plant is IPositioned positioned)
+            {
+                positioned.Row = row;
+                positioned.Col = col;
+            }
+
+            RegisterObject(plant);
+            _logger.AddLog($"[ENGINE] Posadzono {plantType} na ({row},{col}).");
+            return true;
+        }
+
+        public bool IsOccupied(int row, int col)
+        {
+            bool HasAt<T>(IEnumerable<T> list) where T : class
+                => list.OfType<IPositioned>().Any(p => p.Row == row && p.Col == col);
+
+            return HasAt(_state.Tomatoes)
+                || HasAt(_state.Roses)
+                || HasAt(_state.Cactile)
+                || HasAt(_state.Apples);    
+        }
+
+    }
 } 

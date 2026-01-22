@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace _01_agro.Core
 {
-    public class Cactus : Rosliny
+    public class Cactus : Rosliny, IPositioned
     {
+        
         public Cactus():base("Kaktus",TypRosliny.Sukulent) {
             Cena = 20;
             CenaSprzedazy = 40;

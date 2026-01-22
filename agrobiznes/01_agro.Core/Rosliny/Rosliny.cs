@@ -13,19 +13,21 @@ namespace _01_agro.Core
     }
 
     
-    public abstract class Rosliny : ITickable, ICloneable, IComparable<Rosliny>
+    public abstract class Rosliny : ITickable, ICloneable, IComparable<Rosliny>, IPositioned
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        
-
         [Required]
-        public string Nazwa { get; set; }
-        public TypRosliny Typ { get; set; } 
 
-        
+       
+        public string Nazwa { get; set; }
+        public TypRosliny Typ { get; set; }
+
+        public int Row { get; set; } = -1;
+        public int Col { get; set; } = -1;
+
         private float _cena;
         public float Cena
         {
