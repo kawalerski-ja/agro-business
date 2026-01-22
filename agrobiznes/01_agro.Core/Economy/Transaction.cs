@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace _01_agro.Core.Economy
 {
@@ -37,11 +38,12 @@ namespace _01_agro.Core.Economy
 
     public abstract class Transaction
     {
-        public Guid Id { get; }
-        public DateTimeOffset OccurredAt { get; }
-        public Money Amount { get; }
+        [Key]
+        public Guid Id { get; private set; }
+        public DateTimeOffset OccurredAt { get; private set; }
+        public Money Amount { get; private set; }
         public string Description { get; }
-        public TransactionCategory Category { get; }
+        public TransactionCategory Category { get; private set; }
         public abstract TransactionType Type{ get; }
 
         protected Transaction(Money amount, TransactionCategory category, string description, DateTimeOffset? occurredAt = null)
@@ -52,6 +54,8 @@ namespace _01_agro.Core.Economy
             Category = category;
             Description = description;
         }
+
+        protected Transaction() { }
 
         public abstract void Apply(Account account);
 
