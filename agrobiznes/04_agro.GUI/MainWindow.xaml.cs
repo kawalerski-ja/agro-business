@@ -97,7 +97,8 @@ namespace _04_agro.GUI
 
             var (r, c) = _selectedField.Value;
             _engine.LoggerRepo.AddLog($"[GUI] Zaznaczono pole ({r},{c}).");
-            // НЕ обновляем логи тут — throttling в tick
+            // throttling в tick
+
         }
 
         private void RefreshSelectionVisual()
@@ -139,26 +140,26 @@ namespace _04_agro.GUI
 
             try
             {
-                // 1) остановить старый таймер и сохранить/закрыть
+                // 1) ostatnić stary silnik
                 _engine?.StopSimulation();
 
-                // 2) удалить savegame.json
+                // 2) zresetowac savegame.json
                 const string savePath = "savegame.json";
                 if (System.IO.File.Exists(savePath))
                     System.IO.File.Delete(savePath);
 
-                // 3) очистить выделение
+                // 3) wyczyścić zaznaczenie
                 _selectedField = null;
                 RefreshSelectionVisual();
 
-                // 4) создать новый движок
+                // 4) zrozpocząć nowy silnik
                 _engine = new SimulationEngine();
                 _engine.TickHappened += OnEngineTick;
                 _engine.StartSimulation();
 
                 _engine.LoggerRepo.AddLog("[GUI] Rozpoczęto NOWĄ GRĘ (zresetowano zapis).");
 
-                // 5) обновить UI
+                // 5) odnowic UI
                 RenderFromEngine();
                 LoadLogsFromEngine(force: true);
             }
@@ -181,6 +182,8 @@ namespace _04_agro.GUI
             {
                 _engine.LoggerRepo.AddLog("[GUI] Najpierw zaznacz pole, potem kup roślinę.");
                 return;
+                RenderGridFromEngine();
+
             }
 
             var (row, col) = _selectedField.Value;
@@ -224,6 +227,8 @@ namespace _04_agro.GUI
             {
                 _engine.LoggerRepo.AddLog("[GUI] Sprzedaj: najpierw zaznacz pole.");
                 return;
+                RenderGridFromEngine();
+
             }
 
             var (row, col) = _selectedField.Value;
@@ -245,8 +250,10 @@ namespace _04_agro.GUI
         {
             Dispatcher.Invoke(() =>
             {
-                RenderFromEngine();
+                
+                UpdateStatsOnly(state);
 
+                
                 if (DateTime.Now - _lastLogRefresh >= LogRefreshInterval)
                 {
                     _lastLogRefresh = DateTime.Now;
@@ -254,6 +261,7 @@ namespace _04_agro.GUI
                 }
             });
         }
+
 
         private void RenderFromEngine()
         {
@@ -279,28 +287,58 @@ namespace _04_agro.GUI
             if (GrowthBar != null) GrowthBar.Value = Clamp0_100(avgGrowth);
 
             RenderGridFromEngine();
-            RefreshSelectionVisual();
+            
         }
 
         private void RenderGridFromEngine()
         {
-            // reset
-            foreach (var kv in _cellButtons)
-                kv.Value.Background = BrushFromHex("#252526");
+            if (FarmGrid == null) return;
 
-            // paint by coordinates
+            // 1) reset wszystkich pól
+            foreach (var btn in _cellButtons.Values)
+                btn.Background = BrushFromHex("#252526");
+
+            // 2) TOMATO
             foreach (var t in _engine.State.Tomatoes)
-                PaintCell(t.Row, t.Col, "#2E7D32"); // Tomato
+            {
+                PaintCell(
+                    t.Row,
+                    t.Col,
+                    t.IsMature ? "#FFD600" : "#2E7D32" // 🟨 зрелый / 🟩 растёт
+                );
+            }
 
+            // 3) ROSE
             foreach (var r in _engine.State.Roses)
-                PaintCell(r.Row, r.Col, "#AD1457"); // Rose
+            {
+                PaintCell(
+                    r.Row,
+                    r.Col,
+                    r.IsMature ? "#FFD600" : "#AD1457"
+                );
+            }
 
+            // 4) CACTUS
             foreach (var c in _engine.State.Cactile)
-                PaintCell(c.Row, c.Col, "#558B2F"); // Cactus
+            {
+                PaintCell(
+                    c.Row,
+                    c.Col,
+                    c.IsMature ? "#FFD600" : "#558B2F"
+                );
+            }
 
+            // 5) APPLE
             foreach (var a in _engine.State.Apples)
-                PaintCell(a.Row, a.Col, "#1565C0"); // Apple
+            {
+                PaintCell(
+                    a.Row,
+                    a.Col,
+                    a.IsMature ? "#FFD600" : "#1565C0"
+                );
+            }
         }
+
 
         private void PaintCell(int row, int col, string hex)
         {
@@ -308,14 +346,14 @@ namespace _04_agro.GUI
                 btn.Background = BrushFromHex(hex);
         }
 
-        
-        private void LoadLogsFromEngine(bool force = false)
+
+        private void LoadLogsFromEngine(bool force)
         {
             if (LogList == null) return;
 
             var logs = _engine.LoggerRepo.GetLogs(200);
 
-            if (!force && logs.Count == _lastLogCount)
+            if (!force && logs.Count <= _lastLogCount)
                 return;
 
             _lastLogCount = logs.Count;
@@ -324,9 +362,9 @@ namespace _04_agro.GUI
             foreach (var line in logs)
                 LogList.Items.Add(line);
 
-            if (LogList.Items.Count > 0)
-                LogList.ScrollIntoView(LogList.Items[LogList.Items.Count - 1]);
+            LogList.ScrollIntoView(LogList.Items[^1]);
         }
+
 
         protected override void OnClosed(EventArgs e)
         {
@@ -344,5 +382,26 @@ namespace _04_agro.GUI
             if (v > 100) return 100;
             return v;
         }
+        private void UpdateStatsOnly(FarmState state)
+        {
+            if (TickText != null)
+                TickText.Text = $"Tura: {state.CurrentTick}";
+
+            if (BalanceText != null)
+                BalanceText.Text = $"Stan konta: {state.Finance.Account.Balance}";
+
+            var allPlants = state.Tomatoes.Cast<Rosliny>()
+                .Concat(state.Roses)
+                .Concat(state.Cactile)
+                .Concat(state.Apples)
+                .ToList();
+
+            double avgWater = allPlants.Count > 0 ? allPlants.Average(p => p.PoziomNawodnienia) : 0;
+            double avgGrowth = allPlants.Count > 0 ? allPlants.Average(p => p.PoziomWzrostu) : 0;
+
+            if (WaterBar != null) WaterBar.Value = Clamp0_100(avgWater);
+            if (GrowthBar != null) GrowthBar.Value = Clamp0_100(avgGrowth);
+        }
+
     }
 }
