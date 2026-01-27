@@ -60,8 +60,8 @@ namespace _03_agro.Logic
             int onSprinklers = _state.Sprinklers.Count(s => s.IsOn);
             int onLamps = _state.Solars.Count(l => l.IsOn);
 
-            decimal waterCostPerDevice = 0.30m;
-            decimal energyCostPerDevice = 0.50m;
+            decimal waterCostPerDevice = 3.0m;
+            decimal energyCostPerDevice = 5.0m;
 
             decimal waterTotal = onSprinklers * waterCostPerDevice;
             decimal energyTotal = onLamps * energyCostPerDevice;
