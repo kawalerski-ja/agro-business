@@ -24,15 +24,15 @@ namespace _03_agro.Logic
         public event Action<FarmState>? TickHappened;
 
         // =========================
-        //  FIX #1: Synchronizacja stanu (race condition)
-        //  W Twojej wersji Timer tickował w innym wątku,
+        //  Synchronizacja stanu (race condition)
+        //  W wersji Timer tickował w innym wątku,
         //  a GUI w tym samym czasie zmieniało listy roślin (kup/sadź/sprzedaj).
         //  To dawało znikanie roślin i błędne sprzedaże.
         // =========================
         private readonly object _sync = new object();
 
         // =========================
-        //  FIX #2: ochrona przed nakładaniem ticków
+        //  ochrona przed nakładaniem ticków
         //  System.Timers.Timer potrafi wywołać Elapsed ponownie,
         //  zanim poprzedni tick się zakończy (gdy tick trwa > interwał).
         // =========================
@@ -102,7 +102,7 @@ namespace _03_agro.Logic
             // Market = new Market(_state, _logger);   <-- BŁĄD: _state może być null
             // potem jeszcze kilka razy Market = new Market(...)
             //
-            // FIX: najpierw ładujemy, potem ewentualnie tworzymy, potem Market raz.
+            // najpierw ładujemy, potem ewentualnie tworzymy, potem Market raz.
 
             var loaded = GameSaver.LoadGame();
             if (loaded == null)
@@ -152,7 +152,7 @@ namespace _03_agro.Logic
 
         public void StopSimulation()
         {
-            // FIX: w Twojej wersji Timer był tylko Stop(),
+            // w wersji Timer był tylko Stop(),
             // ale mógł nadal mieć “żywy” callback / wisieć w tle przy kilku silnikach.
             // Dispose gwarantuje, że nie będzie kolejnych wywołań.
             try
@@ -180,7 +180,7 @@ namespace _03_agro.Logic
         // =========================
         private void OnTimedEvent(object? source, ElapsedEventArgs e)
         {
-            // FIX: ochrona przed nakładaniem ticków
+            // ochrona przed nakładaniem ticków
             lock (_sync)
             {
                 if (_tickInProgress) return;
@@ -203,8 +203,8 @@ namespace _03_agro.Logic
                 lock (_sync) { _tickInProgress = false; }
             }
 
-            // FIX: TickHappened WYWOŁUJEMY TYLKO RAZ!
-            // W Twojej wersji było:
+            // TickHappened WYWOŁUJEMY TYLKO RAZ!
+            // W wersji było:
             // - TickHappened?.Invoke(_state) w OnTimedEvent
             // - TickHappened?.Invoke(_state) jeszcze raz na końcu Tick()
             TickHappened?.Invoke(snapshot);
@@ -283,8 +283,6 @@ namespace _03_agro.Logic
                 Tick_Internal_NoEvent();
             }
 
-            // jeśli wywołasz Tick() ręcznie, chcesz event:
-            TickHappened?.Invoke(_state);
         }
 
         // =========================
