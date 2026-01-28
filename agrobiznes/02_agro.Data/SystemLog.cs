@@ -9,6 +9,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace _02_agro.Data
 {
+    /// <summary>
+    /// Klasa tworząca strukturę wpisu
+    /// </summary>
     public class SystemLog
     {
         [Key]
