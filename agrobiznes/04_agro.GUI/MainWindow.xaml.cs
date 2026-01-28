@@ -155,7 +155,7 @@ namespace _04_agro.GUI
         // =========================
         private void ManualTick_Click(object sender, RoutedEventArgs e)
         {
-            _engine.Tick();                 // <- Twoja metoda
+            _engine.Tick();                 
             RenderAll(_engine.State);
             LoadLogsFromEngine(force: false);
         }
@@ -177,7 +177,7 @@ namespace _04_agro.GUI
 
             var (row, col) = _selectedField.Value;
 
-            if (_engine.IsOccupied(row, col)) // <- Twoja metoda
+            if (_engine.IsOccupied(row, col))
             {
                 _engine.LoggerRepo.AddLog($"[GUI] Pole ({row},{col}) jest zajęte.");
                 return;
@@ -193,14 +193,14 @@ namespace _04_agro.GUI
 
             string plantName = type.ToString();
 
-            if (!_engine.Market.TryBuyPlant(cost, plantName, out string msg)) // <- Twoja metoda
+            if (!_engine.Market.TryBuyPlant(cost, plantName, out string msg)) 
             {
                 _engine.LoggerRepo.AddLog($"[GUI] Zakup nieudany: {msg}");
                 SystemSounds.Hand.Play();
                 return;
             }
 
-            if (!_engine.PlantAt(row, col, plantName)) // <- Twoja metoda (w środku RegisterObject)
+            if (!_engine.PlantAt(row, col, plantName)) 
                 return;
 
             SystemSounds.Asterisk.Play();
@@ -221,7 +221,7 @@ namespace _04_agro.GUI
 
             var (row, col) = _selectedField.Value;
 
-            if (_engine.Market.TrySellAt(row, col, out string msg)) // <- Twoja metoda
+            if (_engine.Market.TrySellAt(row, col, out string msg)) 
             {
                 _engine.LoggerRepo.AddLog(msg);
                 SystemSounds.Asterisk.Play();
@@ -285,7 +285,7 @@ namespace _04_agro.GUI
         // =========================
         private void SellAll_Click(object sender, RoutedEventArgs e)
         {
-            var msg = _engine.Market.SprzedajWszystko(); // <- Twoja metoda
+            var msg = _engine.Market.SprzedajWszystko(); 
             _engine.LoggerRepo.AddLog(msg);
             SystemSounds.Asterisk.Play();
             RenderAll(_engine.State);
@@ -312,7 +312,7 @@ namespace _04_agro.GUI
         {
             if (InventoryList.SelectedItem is not InventoryItem inv) return;
 
-            Rosliny? cloned = inv.Source.Clone() as Rosliny; // <- Twoja metoda Clone()
+            Rosliny? cloned = inv.Source.Clone() as Rosliny; 
             if (cloned == null) return;
 
             // klon dodajemy do odpowiedniej listy (bez dopisywania logiki silnika)
@@ -362,7 +362,7 @@ namespace _04_agro.GUI
         // =========================
         private void BuySprinkler_Click(object sender, RoutedEventArgs e)
         {
-            var msg = _engine.Market.KupZraszacz(); // <- Twoja metoda
+            var msg = _engine.Market.KupZraszacz(); 
             _engine.LoggerRepo.AddLog(msg);
             SystemSounds.Asterisk.Play();
             RenderAll(_engine.State);
@@ -371,7 +371,7 @@ namespace _04_agro.GUI
 
         private void BuySolar_Click(object sender, RoutedEventArgs e)
         {
-            var msg = _engine.Market.KupPanelSloneczny(); // <- Twoja metoda
+            var msg = _engine.Market.KupPanelSloneczny(); 
             _engine.LoggerRepo.AddLog(msg);
             SystemSounds.Asterisk.Play();
             RenderAll(_engine.State);
@@ -414,7 +414,7 @@ namespace _04_agro.GUI
                 var from = DateTimeOffset.Parse(ReportFromBox.Text.Trim());
                 var to = DateTimeOffset.Parse(ReportToBox.Text.Trim());
 
-                var rep = _engine.State.Finance.GetReport(from, to, "Raport z GUI"); // <- Twoja metoda
+                var rep = _engine.State.Finance.GetReport(from, to, "Raport z GUI"); 
                 ReportText.Text =
                     $"{rep.Title}\n" +
                     $"Revenue: {rep.Revenue}\n" +
