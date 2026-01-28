@@ -56,7 +56,7 @@ namespace _03_agro.Logic
         {
             // Tworzymy "prototyp", żeby sprawdzić aktualną cenę w tym sezonie
             var wzorzec = new Tomato();
-            float koszt = wzorzec.Cena * ilosc; // "Cena" to Twoja cena zakupu z klasy Roslina
+            float koszt = wzorzec.Cena * ilosc; 
 
             // [MIEJSCE NA IF FINANSOWY] 
            if (!TryPay(koszt, TransactionCategory.Seeds, $"Zakup: Pomidory x{ilosc}", out var err))
